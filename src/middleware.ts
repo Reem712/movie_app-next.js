@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-const PUBLIC_PATHS = ['/login', '/'];
+const PUBLIC_PATHS = ['/login'];
+
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const authCookie = request.cookies.get('auth-storage');
@@ -16,7 +17,7 @@ export function middleware(request: NextRequest) {
     } catch {}
   }
 
-  const isPublicPath = PUBLIC_PATHS.some((p) => pathname.startsWith(p));
+  const isPublicPath = PUBLIC_PATHS.some((p) => pathname === p);
 
   if (!isAuthenticated && !isPublicPath) {
     return NextResponse.redirect(new URL('/login', request.url));
