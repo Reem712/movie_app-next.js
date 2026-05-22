@@ -9,7 +9,7 @@ import React, {
   useContext,
 } from 'react';
 
-// ── Color Palette (same as RN) ──────────────────────────────────────────────
+// ── Color Palette ────────────────────────────────────────────────────────────
 
 export const LightColors = {
   primary:       '#4F46E5',
@@ -70,35 +70,55 @@ export const ThemeContext = createContext<ThemeContextValue>({
   toggleTheme:  () => {},
 });
 
-// ── Provider ────────────────────────────────────────────────────────────────
+// ── Provider ─────────────────────────────────────────────────────────────────
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-const [themeMode, setThemeModeState] = useState<ThemeMode>('light');
-const [systemDark, setSystemDark]    = useState(
-  () => typeof window !== 'undefined'
-    ? window.matchMedia('(prefers-color-scheme: dark)').matches
-    : true
-);
+  const [themeMode, setThemeModeState] = useState<ThemeMode>('dark');
+  const [systemDark, setSystemDark]    = useState(false);
 
-  // Detect system preference (replaces useColorScheme from RN)
+  // ✅ Single effect: load saved preference + listen to system changes
   useEffect(() => {
-  const saved = localStorage.getItem('theme-preference') as ThemeMode | null;
-  if (saved) setThemeModeState(saved);
-  else setThemeModeState('dark');
-}, []);
-
-  // Rehydrate saved preference (localStorage replaces AsyncStorage)
-  useEffect(() => {
+    // 1. Load saved preference
     const saved = localStorage.getItem('theme-preference') as ThemeMode | null;
-    if (saved) setThemeModeState(saved);
+    if (saved) {
+      setThemeModeState(saved);
+    }
+
+    // 2. Read current system preference
+    const mq = window.matchMedia('(prefers-color-scheme: dark)');
+    setSystemDark(mq.matches);
+
+    // 3. Listen for system changes
+    const handler = (e: MediaQueryListEvent) => setSystemDark(e.matches);
+    mq.addEventListener('change', handler);
+    return () => mq.removeEventListener('change', handler);
   }, []);
 
   const isDark = themeMode === 'system' ? systemDark : themeMode === 'dark';
   const colors = isDark ? DarkColors : LightColors;
 
-  // Sync <html> class for Tailwind dark mode
+  // ✅ Sync <html> class for Tailwind dark mode + CSS variables
   useEffect(() => {
-    document.documentElement.classList.toggle('dark', isDark);
+    const root = document.documentElement;
+    root.classList.toggle('dark', isDark);
+
+    // Sync CSS variables to match current theme
+    const c = isDark ? DarkColors : LightColors;
+    root.style.setProperty('--primary',        c.primary);
+    root.style.setProperty('--primary-soft',   c.primarySoft);
+    root.style.setProperty('--accent',         c.accent);
+    root.style.setProperty('--background',     c.background);
+    root.style.setProperty('--card',           c.card);
+    root.style.setProperty('--surface',        c.surface);
+    root.style.setProperty('--text',           c.text);
+    root.style.setProperty('--text-secondary', c.textSecondary);
+    root.style.setProperty('--text-muted',     c.textMuted);
+    root.style.setProperty('--border',         c.border);
+    root.style.setProperty('--skeleton',       c.skeleton);
+    root.style.setProperty('--error',          c.error);
+    root.style.setProperty('--success',        c.success);
+    root.style.setProperty('--shadow',         c.shadow);
+    root.style.setProperty('--tab-inactive',   c.tabInactive);
   }, [isDark]);
 
   const setThemeMode = useCallback((mode: ThemeMode) => {
@@ -112,12 +132,16 @@ const [systemDark, setSystemDark]    = useState(
 
   const value = useMemo(
     () => ({ colors, themeMode, isDark, setThemeMode, toggleTheme }),
-    [colors, themeMode, isDark, setThemeMode, toggleTheme]
+    [colors, themeMode, isDark, setThemeMode, toggleTheme],
   );
 
-  return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
+  return (
+    <ThemeContext.Provider value={value}>
+      {children}
+    </ThemeContext.Provider>
+  );
 };
 
-// ── Hook ────────────────────────────────────────────────────────────────────
+// ── Hook ─────────────────────────────────────────────────────────────────────
 
 export const useTheme = () => useContext(ThemeContext);

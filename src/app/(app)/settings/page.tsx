@@ -19,58 +19,115 @@ export default function SettingsPage() {
     router.push('/onboarding');
   };
 
+  const accent = '#6c63ff';
+  const font   = "inherit";
+
   return (
-    <div className="min-h-[100dvh] bg-[#F8F7F4] font-sans text-[#1A1A2E]">
+    <div style={{ minHeight: '100dvh', background: '#F8F7F4', fontFamily: font, color: '#1A1A2E' }}>
 
       {/* ── Nav ── */}
-      <header className="sticky top-0 z-50 bg-[#EDE5D8] border-b border-black/[0.08]">
-        <div className="mx-auto max-w-[1200px] px-5 h-14 flex items-center gap-3">
+      <header style={{
+        position: 'sticky', top: 0, zIndex: 50,
+        background: '#EDE5D8',
+        borderBottom: '1px solid rgba(0,0,0,0.08)',
+      }}>
+        <div style={{
+          maxWidth: 1200, margin: '0 auto',
+          padding: '0 20px', height: 56,
+          display: 'flex', alignItems: 'center', gap: 12,
+        }}>
           <button
             onClick={() => router.back()}
-            className="w-[34px] h-[34px] rounded-[9px] bg-white border border-black/10 flex items-center justify-center flex-shrink-0 hover:bg-black/5 transition-colors"
+            style={{
+              width: 34, height: 34, borderRadius: 9,
+              background: '#fff', border: '1px solid rgba(0,0,0,0.10)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              flexShrink: 0, cursor: 'pointer', transition: 'background 0.15s',
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(0,0,0,0.05)')}
+            onMouseLeave={(e) => (e.currentTarget.style.background = '#fff')}
           >
             <ArrowLeft size={15} color="#1A1A2E" />
           </button>
 
-          <div className="w-[30px] h-[30px] rounded-[8px] bg-[#6c63ff] flex items-center justify-center">
+          <div style={{
+            width: 30, height: 30, borderRadius: 8,
+            background: accent,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}>
             <Tv size={15} color="#fff" />
           </div>
-          <span className="text-[15px] font-extrabold text-[#1A1A2E] tracking-tight">
+
+          <span style={{ fontSize: 15, fontWeight: 800, color: '#1A1A2E', letterSpacing: -0.4 }}>
             CineExplorer
           </span>
-          <span className="text-[13px] text-[#9CA3AF] ml-0.5">/ Settings</span>
+          <span style={{ fontSize: 13, color: '#9CA3AF' }}>/ Settings</span>
         </div>
       </header>
 
       {/* ── Hero ── */}
-      <div className="bg-gradient-to-br from-[#EDE5D8] via-[#F0EAF5] to-[#F8F7F4] border-b border-black/[0.07] px-5 py-[clamp(24px,4vw,40px)]">
-        <div className="max-w-[680px] mx-auto flex items-center gap-[clamp(14px,3vw,24px)] flex-wrap">
+      <div style={{
+        background: 'linear-gradient(135deg, #EDE5D8 0%, #F0EAF5 50%, #F8F7F4 100%)',
+        borderBottom: '1px solid rgba(0,0,0,0.07)',
+        padding: 'clamp(24px,4vw,40px) 20px',
+      }}>
+        <div style={{
+          maxWidth: 680, margin: '0 auto',
+          display: 'flex', alignItems: 'center',
+          gap: 'clamp(14px,3vw,24px)', flexWrap: 'wrap',
+        }}>
 
           {/* Avatar */}
-          <div className="relative flex-shrink-0">
+          <div style={{ position: 'relative', flexShrink: 0 }}>
             {user?.image ? (
               <img
                 src={user.image}
                 alt={user.firstName}
-                className="w-[72px] h-[72px] rounded-full object-cover border-[3px] border-white shadow-[0_2px_12px_rgba(108,99,255,0.15)]"
+                style={{
+                  width: 72, height: 72, borderRadius: '50%',
+                  objectFit: 'cover',
+                  border: '3px solid #fff',
+                  boxShadow: '0 2px 12px rgba(108,99,255,0.15)',
+                }}
               />
             ) : (
-              <div className="w-[72px] h-[72px] rounded-full bg-[#EDEAF4] flex items-center justify-center border-[3px] border-white shadow-[0_2px_12px_rgba(108,99,255,0.15)]">
-                <User size={28} color="#6c63ff" />
+              <div style={{
+                width: 72, height: 72, borderRadius: '50%',
+                background: '#EDEAF4',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                border: '3px solid #fff',
+                boxShadow: '0 2px 12px rgba(108,99,255,0.15)',
+              }}>
+                <User size={28} color={accent} />
               </div>
             )}
-            <div className="absolute bottom-[3px] right-[3px] w-[13px] h-[13px] rounded-full bg-[#10b981] border-2 border-[#F8F7F4]" />
+            <div style={{
+              position: 'absolute', bottom: 3, right: 3,
+              width: 13, height: 13, borderRadius: '50%',
+              background: '#10b981', border: '2px solid #F8F7F4',
+            }} />
           </div>
 
           {/* Name */}
-          <div className="flex-1 min-w-[160px]">
-            <h1 className="text-[clamp(18px,3vw,24px)] font-extrabold text-[#1A1A2E] tracking-tight mb-[3px]">
+          <div style={{ flex: 1, minWidth: 160 }}>
+            <h1 style={{
+              fontSize: 'clamp(18px,3vw,24px)', fontWeight: 800,
+              color: '#1A1A2E', letterSpacing: -0.5,
+              margin: '0 0 3px',
+            }}>
               {user?.firstName} {user?.lastName}
             </h1>
-            <p className="text-[12px] text-[#9CA3AF] mb-[14px]">@{user?.username}</p>
-            <div className="inline-flex items-center gap-[5px] bg-[#10b981]/10 border border-[#10b981]/20 rounded-full px-[10px] py-[3px]">
-              <div className="w-[6px] h-[6px] rounded-full bg-[#10b981]" />
-              <span className="text-[11px] font-bold text-[#10b981] tracking-[0.03em]">
+            <p style={{ fontSize: 12, color: '#9CA3AF', margin: '0 0 14px' }}>
+              @{user?.username}
+            </p>
+            <div style={{
+              display: 'inline-flex', alignItems: 'center', gap: 5,
+              background: 'rgba(16,185,129,0.10)',
+              border: '1px solid rgba(16,185,129,0.20)',
+              borderRadius: 99, padding: '3px 10px',
+            }}>
+              <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#10b981' }} />
+              <span style={{ fontSize: 11, fontWeight: 700, color: '#10b981', letterSpacing: '0.03em' }}>
                 Active account
               </span>
             </div>
@@ -79,38 +136,53 @@ export default function SettingsPage() {
       </div>
 
       {/* ── Main ── */}
-      <main className="max-w-[680px] mx-auto px-5 py-[clamp(20px,3vw,32px)] pb-[clamp(32px,5vw,60px)]">
+      <main style={{
+        maxWidth: 680, margin: '0 auto',
+        padding: 'clamp(20px,3vw,32px) 20px clamp(32px,5vw,60px)',
+      }}>
 
         {/* Account */}
         <Section title="Account">
           <InfoRow icon={User}   label="Full name" value={`${user?.firstName ?? ''} ${user?.lastName ?? ''}`} />
           <InfoRow icon={Mail}   label="Email"     value={user?.email ?? '—'} />
           <InfoRow icon={AtSign} label="Username"  value={`@${user?.username ?? '—'}`} />
-          <div className="flex items-center gap-3 px-4 py-3">
-            <div className="w-8 h-8 rounded-[9px] bg-[#10b981]/10 flex items-center justify-center flex-shrink-0">
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 16px' }}>
+            <div style={{
+              width: 32, height: 32, borderRadius: 9,
+              background: 'rgba(16,185,129,0.10)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+            }}>
               <Shield size={14} color="#10b981" />
             </div>
             <div>
-              <p className="text-[11px] text-[#9CA3AF] mb-[2px]">Account status</p>
-              <p className="text-[13px] font-semibold text-[#10b981]">Active</p>
+              <p style={{ fontSize: 11, color: '#9CA3AF', margin: '0 0 2px' }}>Account status</p>
+              <p style={{ fontSize: 13, fontWeight: 600, color: '#10b981', margin: 0 }}>Active</p>
             </div>
           </div>
         </Section>
 
         {/* About */}
         <Section title="About">
-          <div className="flex items-center gap-3 px-4 py-3 border-b border-black/[0.06]">
-            <div className="w-8 h-8 rounded-[9px] bg-[#6c63ff]/10 flex items-center justify-center flex-shrink-0">
-              <Tv size={14} color="#6c63ff" />
+          <div style={{
+            display: 'flex', alignItems: 'center', gap: 12,
+            padding: '12px 16px',
+            borderBottom: '1px solid rgba(0,0,0,0.06)',
+          }}>
+            <div style={{
+              width: 32, height: 32, borderRadius: 9,
+              background: 'rgba(108,99,255,0.10)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+            }}>
+              <Tv size={14} color={accent} />
             </div>
             <div>
-              <p className="text-[11px] text-[#9CA3AF] mb-[2px]">App</p>
-              <p className="text-[13px] font-semibold text-[#1A1A2E]">CineExplorer</p>
+              <p style={{ fontSize: 11, color: '#9CA3AF', margin: '0 0 2px' }}>App</p>
+              <p style={{ fontSize: 13, fontWeight: 600, color: '#1A1A2E', margin: 0 }}>CineExplorer</p>
             </div>
           </div>
-          <p className="px-4 py-[10px] text-[12px] text-[#9CA3AF]">
+          <p style={{ padding: '10px 16px', fontSize: 12, color: '#9CA3AF', margin: 0 }}>
             Movie data powered by{' '}
-            <span className="text-[#926b1a] font-bold">TMDB</span>
+            <span style={{ color: '#926b1a', fontWeight: 700 }}>TMDB</span>
             {' '}· Built with Next.js
           </p>
         </Section>
@@ -120,34 +192,58 @@ export default function SettingsPage() {
           {!showConfirm ? (
             <button
               onClick={() => setShowConfirm(true)}
-              className="w-full flex items-center justify-between px-4 py-[14px] hover:bg-red-50 transition-colors"
+              style={{
+                width: '100%', display: 'flex', alignItems: 'center',
+                justifyContent: 'space-between',
+                padding: '14px 16px',
+                background: 'transparent', border: 'none', cursor: 'pointer',
+                transition: 'background 0.15s', fontFamily: 'inherit',
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.background = '#fef2f2')}
+              onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
             >
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-[9px] bg-red-500/[0.08] flex items-center justify-center flex-shrink-0">
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                <div style={{
+                  width: 32, height: 32, borderRadius: 9,
+                  background: 'rgba(239,68,68,0.08)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+                }}>
                   <LogOut size={14} color="#ef4444" />
                 </div>
-                <div className="text-left">
-                  <p className="text-[13px] font-bold text-[#ef4444]">Sign out</p>
-                  <p className="text-[11px] text-[#9CA3AF]">You'll need to log in again</p>
+                <div style={{ textAlign: 'left' }}>
+                  <p style={{ fontSize: 13, fontWeight: 700, color: '#ef4444', margin: '0 0 2px' }}>Sign out</p>
+                  <p style={{ fontSize: 11, color: '#9CA3AF', margin: 0 }}>You'll need to log in again</p>
                 </div>
               </div>
               <ChevronRight size={14} color="#9CA3AF" />
             </button>
           ) : (
-            <div className="p-4">
-              <p className="text-[13px] font-semibold text-[#1A1A2E] mb-[14px]">
+            <div style={{ padding: 16 }}>
+              <p style={{ fontSize: 13, fontWeight: 600, color: '#1A1A2E', margin: '0 0 14px' }}>
                 Are you sure you want to sign out?
               </p>
-              <div className="flex gap-2">
+              <div style={{ display: 'flex', gap: 8 }}>
                 <button
                   onClick={handleLogout}
-                  className="flex-1 py-[10px] bg-[#ef4444] border-none rounded-[10px] cursor-pointer text-white text-[12px] font-bold flex items-center justify-center gap-[5px]"
+                  style={{
+                    flex: 1, padding: '10px 0',
+                    background: '#ef4444', border: 'none', borderRadius: 10,
+                    cursor: 'pointer', color: '#fff', fontSize: 12, fontWeight: 700,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5,
+                    fontFamily: 'inherit',
+                  }}
                 >
                   <LogOut size={13} /> Yes, sign out
                 </button>
                 <button
                   onClick={() => setShowConfirm(false)}
-                  className="flex-1 py-[10px] bg-[#F8F7F4] border border-black/10 rounded-[10px] cursor-pointer text-[#1A1A2E] text-[12px] font-semibold flex items-center justify-center gap-[5px]"
+                  style={{
+                    flex: 1, padding: '10px 0',
+                    background: '#F8F7F4', border: '1px solid rgba(0,0,0,0.10)', borderRadius: 10,
+                    cursor: 'pointer', color: '#1A1A2E', fontSize: 12, fontWeight: 600,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5,
+                    fontFamily: 'inherit',
+                  }}
                 >
                   <Check size={13} /> Cancel
                 </button>
@@ -165,11 +261,20 @@ export default function SettingsPage() {
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="mb-6">
-      <p className="text-[10px] font-bold text-[#9CA3AF] uppercase tracking-[0.1em] mb-2 ml-[2px]">
+    <div style={{ marginBottom: 24 }}>
+      <p style={{
+        fontSize: 10, fontWeight: 700, color: '#9CA3AF',
+        textTransform: 'uppercase', letterSpacing: '0.1em',
+        margin: '0 0 8px 2px',
+      }}>
         {title}
       </p>
-      <div className="bg-white border border-black/[0.07] rounded-[14px] overflow-hidden">
+      <div style={{
+        background: '#fff',
+        border: '1px solid rgba(0,0,0,0.07)',
+        borderRadius: 14,
+        overflow: 'hidden',
+      }}>
         {children}
       </div>
     </div>
@@ -185,13 +290,26 @@ function InfoRow({
   last?: boolean;
 }) {
   return (
-    <div className={`flex items-center gap-3 px-4 py-3 ${last ? '' : 'border-b border-black/[0.06]'}`}>
-      <div className="w-8 h-8 rounded-[9px] bg-[#F8F7F4] flex items-center justify-center flex-shrink-0">
+    <div style={{
+      display: 'flex', alignItems: 'center', gap: 12,
+      padding: '12px 16px',
+      borderBottom: last ? 'none' : '1px solid rgba(0,0,0,0.06)',
+    }}>
+      <div style={{
+        width: 32, height: 32, borderRadius: 9,
+        background: '#F8F7F4',
+        display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+      }}>
         <Icon size={14} color="#6B7280" />
       </div>
-      <div className="flex-1 min-w-0">
-        <p className="text-[11px] text-[#9CA3AF] mb-[2px]">{label}</p>
-        <p className="text-[13px] font-semibold text-[#1A1A2E] truncate">{value}</p>
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <p style={{ fontSize: 11, color: '#9CA3AF', margin: '0 0 2px' }}>{label}</p>
+        <p style={{
+          fontSize: 13, fontWeight: 600, color: '#1A1A2E', margin: 0,
+          overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+        }}>
+          {value}
+        </p>
       </div>
     </div>
   );

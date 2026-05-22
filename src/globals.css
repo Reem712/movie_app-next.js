@@ -17,7 +17,7 @@
   --skeleton:       #E9E9EF;
   --error:          #EF4444;
   --success:        #10B981;
-  --shadow:         rgba(79,70,229,0.12);
+  --shadow:         rgba(79, 70, 229, 0.12);
   --tab-inactive:   #9CA3AF;
 }
 
@@ -36,23 +36,37 @@
   --skeleton:       #232136;
   --error:          #F87171;
   --success:        #34D399;
-  --shadow:         rgba(0,0,0,0.5);
+  --shadow:         rgba(0, 0, 0, 0.5);
   --tab-inactive:   #6B6A82;
 }
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
-
-body {
-  background-color: var(--background);
-  color: var(--text);
-  font-family: 'Geist', -apple-system, BlinkMacSystemFont, sans-serif;
-  -webkit-font-smoothing: antialiased;
+/* ── Reset ── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-/* ── Skeleton shimmer animation ── */
+/* ── Base ── */
+html {
+  /* ✅ ensures full height available to children */
+  min-height: 100%;
+}
+
+body {
+  min-height: 100dvh;
+  background-color: var(--background);
+  color: var(--text);
+  /* ✅ uses the font variable injected by next/font */
+  font-family: var(--font-geist), -apple-system, BlinkMacSystemFont, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Skeleton shimmer ── */
 @keyframes shimmer {
   0%   { opacity: 0.5; }
-  50%  { opacity: 1; }
+  50%  { opacity: 1;   }
   100% { opacity: 0.5; }
 }
 .skeleton-pulse {
@@ -60,20 +74,20 @@ body {
   animation: shimmer 1.4s ease-in-out infinite;
 }
 
-/* ── Shake animation (login form) ── */
+/* ── Shake (login form) ── */
 @keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  20%       { transform: translateX(10px); }
+  0%, 100% { transform: translateX(0);   }
+  20%       { transform: translateX(10px);  }
   40%       { transform: translateX(-10px); }
-  60%       { transform: translateX(6px); }
-  80%       { transform: translateX(-6px); }
+  60%       { transform: translateX(6px);   }
+  80%       { transform: translateX(-6px);  }
 }
 .shake { animation: shake 0.35s ease-in-out; }
 
-/* ── Slide-up animation ── */
+/* ── Slide-up ── */
 @keyframes slideUp {
   from { opacity: 0; transform: translateY(20px); }
-  to   { opacity: 1; transform: translateY(0); }
+  to   { opacity: 1; transform: translateY(0);     }
 }
 .slide-up { animation: slideUp 0.4s ease forwards; }
 
@@ -84,7 +98,7 @@ body {
 }
 .fade-in { animation: fadeIn 0.3s ease forwards; }
 
-/* ── Scrollbar styling ── */
-::-webkit-scrollbar { width: 6px; height: 6px; }
+/* ── Scrollbar ── */
+::-webkit-scrollbar       { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
