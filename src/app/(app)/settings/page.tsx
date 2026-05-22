@@ -8,83 +8,9 @@ import {
 } from 'lucide-react';
 import { useAuthStore } from '@/store/useAuthStore';
 
-/* ─── Palette (identical to HomePage) ────────────────────────────────────── */
-const C = {
-  bg:          '#0a0a0f',
-  surface:     '#13131a',
-  card:        '#1a1a24',
-  border:      'rgba(255,255,255,0.07)',
-  text:        '#f0f0f5',
-  muted:       '#7a7a90',
-  primary:     '#6c63ff',
-  primarySoft: 'rgba(108,99,255,0.15)',
-  accent:      '#e2b96f',
-  accentSoft:  'rgba(226,185,111,0.1)',
-  error:       '#ef4444',
-  errorSoft:   'rgba(239,68,68,0.12)',
-  success:     '#10b981',
-  successSoft: 'rgba(16,185,129,0.12)',
-};
-
-/* ─── Reusable sub-components ─────────────────────────────────────────────── */
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
-  return (
-    <div style={{ marginBottom: 28 }}>
-      <p style={{
-        fontSize: 10, fontWeight: 700, color: C.muted,
-        letterSpacing: '0.1em', textTransform: 'uppercase',
-        margin: '0 0 10px 2px',
-      }}>
-        {title}
-      </p>
-      <div style={{
-        backgroundColor: C.card,
-        border: `1px solid ${C.border}`,
-        borderRadius: 16,
-        overflow: 'hidden',
-      }}>
-        {children}
-      </div>
-    </div>
-  );
-}
-
-function InfoRow({
-  icon: Icon, label, value, last = false,
-}: {
-  icon: React.ElementType; label: string; value: string; last?: boolean;
-}) {
-  return (
-    <div style={{
-      display: 'flex', alignItems: 'center', gap: 14,
-      padding: '14px 18px',
-      borderBottom: last ? 'none' : `1px solid ${C.border}`,
-    }}>
-      <div style={{
-        width: 34, height: 34, borderRadius: 10,
-        backgroundColor: C.surface,
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        flexShrink: 0,
-      }}>
-        <Icon size={15} color={C.muted} />
-      </div>
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <p style={{ fontSize: 11, color: C.muted, margin: '0 0 2px' }}>{label}</p>
-        <p style={{
-          fontSize: 14, fontWeight: 600, color: C.text, margin: 0,
-          overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-        }}>
-          {value}
-        </p>
-      </div>
-    </div>
-  );
-}
-
-/* ─── Page ────────────────────────────────────────────────────────────────── */
 export default function SettingsPage() {
-  const router            = useRouter();
-  const { user, logout }  = useAuthStore();
+  const router           = useRouter();
+  const { user, logout } = useAuthStore();
   const [showConfirm, setShowConfirm] = useState(false);
 
   const handleLogout = async () => {
@@ -94,119 +20,57 @@ export default function SettingsPage() {
   };
 
   return (
-    <div style={{
-      minHeight: '100dvh',
-      backgroundColor: C.bg,
-      fontFamily: "'DM Sans', -apple-system, sans-serif",
-      color: C.text,
-    }}>
+    <div className="min-h-[100dvh] bg-[#F8F7F4] font-sans text-[#1A1A2E]">
 
       {/* ── Nav ── */}
-      <header style={{
-        position: 'sticky', top: 0, zIndex: 50,
-        background: 'rgba(10,10,15,0.88)',
-        backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)',
-        borderBottom: `1px solid ${C.border}`,
-      } as React.CSSProperties}>
-        <div style={{
-          maxWidth: 1200, margin: '0 auto',
-          padding: '0 20px', height: 60,
-          display: 'flex', alignItems: 'center', gap: 14,
-        }}>
+      <header className="sticky top-0 z-50 bg-[#EDE5D8] border-b border-black/[0.08]">
+        <div className="mx-auto max-w-[1200px] px-5 h-14 flex items-center gap-3">
           <button
             onClick={() => router.back()}
-            style={{
-              width: 36, height: 36, borderRadius: 9,
-              background: C.surface, border: `1px solid ${C.border}`,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              cursor: 'pointer', flexShrink: 0,
-            }}
+            className="w-[34px] h-[34px] rounded-[9px] bg-white border border-black/10 flex items-center justify-center flex-shrink-0 hover:bg-black/5 transition-colors"
           >
-            <ArrowLeft size={16} color={C.text} />
+            <ArrowLeft size={15} color="#1A1A2E" />
           </button>
 
-          {/* Logo */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
-            <div style={{
-              width: 32, height: 32, borderRadius: 9,
-              backgroundColor: C.primary,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-            }}>
-              <Tv size={16} color="#fff" />
-            </div>
-            <span style={{ fontSize: 16, fontWeight: 800, color: C.text, letterSpacing: -0.5 }}>
-              CineExplorer
-            </span>
+          <div className="w-[30px] h-[30px] rounded-[8px] bg-[#6c63ff] flex items-center justify-center">
+            <Tv size={15} color="#fff" />
           </div>
-
-          <span style={{ fontSize: 14, color: C.muted, marginLeft: 4 }}>/ Settings</span>
+          <span className="text-[15px] font-extrabold text-[#1A1A2E] tracking-tight">
+            CineExplorer
+          </span>
+          <span className="text-[13px] text-[#9CA3AF] ml-0.5">/ Settings</span>
         </div>
       </header>
 
-      {/* ── Profile Hero ── */}
-      <div style={{
-        background: 'linear-gradient(160deg, #110d2a 0%, #0d1a30 60%, #0a0a0f 100%)',
-        borderBottom: `1px solid ${C.border}`,
-        padding: 'clamp(28px,5vw,48px) 20px',
-      }}>
-        <div style={{
-          maxWidth: 680, margin: '0 auto',
-          display: 'flex', alignItems: 'center',
-          gap: 'clamp(16px,4vw,28px)', flexWrap: 'wrap',
-        }}>
+      {/* ── Hero ── */}
+      <div className="bg-gradient-to-br from-[#EDE5D8] via-[#F0EAF5] to-[#F8F7F4] border-b border-black/[0.07] px-5 py-[clamp(24px,4vw,40px)]">
+        <div className="max-w-[680px] mx-auto flex items-center gap-[clamp(14px,3vw,24px)] flex-wrap">
+
           {/* Avatar */}
-          <div style={{ position: 'relative', flexShrink: 0 }}>
+          <div className="relative flex-shrink-0">
             {user?.image ? (
               <img
                 src={user.image}
                 alt={user.firstName}
-                style={{
-                  width: 80, height: 80, borderRadius: '50%',
-                  objectFit: 'cover',
-                  border: `3px solid ${C.card}`,
-                  boxShadow: '0 4px 24px rgba(0,0,0,0.5)',
-                }}
+                className="w-[72px] h-[72px] rounded-full object-cover border-[3px] border-white shadow-[0_2px_12px_rgba(108,99,255,0.15)]"
               />
             ) : (
-              <div style={{
-                width: 80, height: 80, borderRadius: '50%',
-                backgroundColor: C.primarySoft,
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                border: `3px solid ${C.card}`,
-              }}>
-                <User size={34} color={C.primary} />
+              <div className="w-[72px] h-[72px] rounded-full bg-[#EDEAF4] flex items-center justify-center border-[3px] border-white shadow-[0_2px_12px_rgba(108,99,255,0.15)]">
+                <User size={28} color="#6c63ff" />
               </div>
             )}
-            {/* Online dot */}
-            <div style={{
-              position: 'absolute', bottom: 4, right: 4,
-              width: 14, height: 14, borderRadius: '50%',
-              backgroundColor: C.success,
-              border: `2px solid ${C.bg}`,
-            }} />
+            <div className="absolute bottom-[3px] right-[3px] w-[13px] h-[13px] rounded-full bg-[#10b981] border-2 border-[#F8F7F4]" />
           </div>
 
-          {/* Name block */}
-          <div style={{ flex: '1 1 180px', minWidth: 0 }}>
-            <h1 style={{
-              fontSize: 'clamp(20px,3vw,28px)', fontWeight: 800,
-              color: '#fff', letterSpacing: -0.5, margin: '0 0 4px',
-            }}>
+          {/* Name */}
+          <div className="flex-1 min-w-[160px]">
+            <h1 className="text-[clamp(18px,3vw,24px)] font-extrabold text-[#1A1A2E] tracking-tight mb-[3px]">
               {user?.firstName} {user?.lastName}
             </h1>
-            <p style={{ fontSize: 13, color: C.muted, margin: '0 0 18px' }}>
-              @{user?.username}
-            </p>
-
-            {/* Status badge */}
-            <div style={{
-              display: 'inline-flex', alignItems: 'center', gap: 6,
-              background: C.successSoft,
-              border: '1px solid rgba(16,185,129,0.25)',
-              borderRadius: 20, padding: '4px 12px',
-            }}>
-              <div style={{ width: 6, height: 6, borderRadius: 3, background: C.success }} />
-              <span style={{ fontSize: 11, fontWeight: 600, color: C.success, letterSpacing: '0.03em' }}>
+            <p className="text-[12px] text-[#9CA3AF] mb-[14px]">@{user?.username}</p>
+            <div className="inline-flex items-center gap-[5px] bg-[#10b981]/10 border border-[#10b981]/20 rounded-full px-[10px] py-[3px]">
+              <div className="w-[6px] h-[6px] rounded-full bg-[#10b981]" />
+              <span className="text-[11px] font-bold text-[#10b981] tracking-[0.03em]">
                 Active account
               </span>
             </div>
@@ -215,61 +79,40 @@ export default function SettingsPage() {
       </div>
 
       {/* ── Main ── */}
-      <main style={{
-        maxWidth: 680, margin: '0 auto',
-        padding: 'clamp(24px,4vw,40px) 20px clamp(40px,6vw,80px)',
-      }}>
+      <main className="max-w-[680px] mx-auto px-5 py-[clamp(20px,3vw,32px)] pb-[clamp(32px,5vw,60px)]">
 
-        {/* Account info */}
+        {/* Account */}
         <Section title="Account">
           <InfoRow icon={User}   label="Full name" value={`${user?.firstName ?? ''} ${user?.lastName ?? ''}`} />
           <InfoRow icon={Mail}   label="Email"     value={user?.email ?? '—'} />
           <InfoRow icon={AtSign} label="Username"  value={`@${user?.username ?? '—'}`} />
-          <div style={{
-            display: 'flex', alignItems: 'center', gap: 14,
-            padding: '14px 18px',
-          }}>
-            <div style={{
-              width: 34, height: 34, borderRadius: 10,
-              backgroundColor: C.successSoft,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              flexShrink: 0,
-            }}>
-              <Shield size={15} color={C.success} />
+          <div className="flex items-center gap-3 px-4 py-3">
+            <div className="w-8 h-8 rounded-[9px] bg-[#10b981]/10 flex items-center justify-center flex-shrink-0">
+              <Shield size={14} color="#10b981" />
             </div>
             <div>
-              <p style={{ fontSize: 11, color: C.muted, margin: '0 0 2px' }}>Account status</p>
-              <p style={{ fontSize: 14, fontWeight: 600, color: C.success, margin: 0 }}>Active</p>
+              <p className="text-[11px] text-[#9CA3AF] mb-[2px]">Account status</p>
+              <p className="text-[13px] font-semibold text-[#10b981]">Active</p>
             </div>
           </div>
         </Section>
 
         {/* About */}
         <Section title="About">
-          <div style={{
-            display: 'flex', alignItems: 'center', gap: 14,
-            padding: '14px 18px', borderBottom: `1px solid ${C.border}`,
-          }}>
-            <div style={{
-              width: 34, height: 34, borderRadius: 10,
-              backgroundColor: C.primarySoft,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              flexShrink: 0,
-            }}>
-              <Tv size={15} color={C.primary} />
+          <div className="flex items-center gap-3 px-4 py-3 border-b border-black/[0.06]">
+            <div className="w-8 h-8 rounded-[9px] bg-[#6c63ff]/10 flex items-center justify-center flex-shrink-0">
+              <Tv size={14} color="#6c63ff" />
             </div>
-            <div style={{ flex: 1 }}>
-              <p style={{ fontSize: 11, color: C.muted, margin: '0 0 2px' }}>App</p>
-              <p style={{ fontSize: 14, fontWeight: 600, color: C.text, margin: 0 }}>CineExplorer</p>
+            <div>
+              <p className="text-[11px] text-[#9CA3AF] mb-[2px]">App</p>
+              <p className="text-[13px] font-semibold text-[#1A1A2E]">CineExplorer</p>
             </div>
           </div>
-          <div style={{ padding: '14px 18px' }}>
-            <p style={{ fontSize: 12, color: C.muted, margin: 0 }}>
-              Movie data powered by{' '}
-              <span style={{ color: C.accent, fontWeight: 600 }}>TMDB</span>
-              {' '}· Built with Next.js
-            </p>
-          </div>
+          <p className="px-4 py-[10px] text-[12px] text-[#9CA3AF]">
+            Movie data powered by{' '}
+            <span className="text-[#926b1a] font-bold">TMDB</span>
+            {' '}· Built with Next.js
+          </p>
         </Section>
 
         {/* Danger zone */}
@@ -277,61 +120,36 @@ export default function SettingsPage() {
           {!showConfirm ? (
             <button
               onClick={() => setShowConfirm(true)}
-              style={{
-                width: '100%',
-                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                padding: '16px 18px',
-                background: 'none', border: 'none', cursor: 'pointer',
-              }}
+              className="w-full flex items-center justify-between px-4 py-[14px] hover:bg-red-50 transition-colors"
             >
-              <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-                <div style={{
-                  width: 34, height: 34, borderRadius: 10,
-                  backgroundColor: C.errorSoft,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  flexShrink: 0,
-                }}>
-                  <LogOut size={15} color={C.error} />
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-[9px] bg-red-500/[0.08] flex items-center justify-center flex-shrink-0">
+                  <LogOut size={14} color="#ef4444" />
                 </div>
-                <div style={{ textAlign: 'left' }}>
-                  <p style={{ fontSize: 14, fontWeight: 600, color: C.error, margin: 0 }}>Sign Out</p>
-                  <p style={{ fontSize: 12, color: C.muted, margin: 0 }}>You'll need to log in again</p>
+                <div className="text-left">
+                  <p className="text-[13px] font-bold text-[#ef4444]">Sign out</p>
+                  <p className="text-[11px] text-[#9CA3AF]">You'll need to log in again</p>
                 </div>
               </div>
-              <ChevronRight size={16} color={C.muted} />
+              <ChevronRight size={14} color="#9CA3AF" />
             </button>
           ) : (
-            <div style={{ padding: '18px 18px' }}>
-              <p style={{ fontSize: 14, fontWeight: 600, color: C.text, margin: '0 0 16px' }}>
+            <div className="p-4">
+              <p className="text-[13px] font-semibold text-[#1A1A2E] mb-[14px]">
                 Are you sure you want to sign out?
               </p>
-              <div style={{ display: 'flex', gap: 10 }}>
+              <div className="flex gap-2">
                 <button
                   onClick={handleLogout}
-                  style={{
-                    flex: 1, padding: '11px 0',
-                    background: C.error, border: 'none',
-                    borderRadius: 10, cursor: 'pointer',
-                    color: '#fff', fontSize: 13, fontWeight: 700,
-                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
-                    fontFamily: "'DM Sans', sans-serif",
-                  }}
+                  className="flex-1 py-[10px] bg-[#ef4444] border-none rounded-[10px] cursor-pointer text-white text-[12px] font-bold flex items-center justify-center gap-[5px]"
                 >
-                  <LogOut size={14} /> Yes, sign out
+                  <LogOut size={13} /> Yes, sign out
                 </button>
                 <button
                   onClick={() => setShowConfirm(false)}
-                  style={{
-                    flex: 1, padding: '11px 0',
-                    background: C.surface,
-                    border: `1px solid ${C.border}`,
-                    borderRadius: 10, cursor: 'pointer',
-                    color: C.text, fontSize: 13, fontWeight: 600,
-                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
-                    fontFamily: "'DM Sans', sans-serif",
-                  }}
+                  className="flex-1 py-[10px] bg-[#F8F7F4] border border-black/10 rounded-[10px] cursor-pointer text-[#1A1A2E] text-[12px] font-semibold flex items-center justify-center gap-[5px]"
                 >
-                  <Check size={14} /> Cancel
+                  <Check size={13} /> Cancel
                 </button>
               </div>
             </div>
@@ -339,6 +157,42 @@ export default function SettingsPage() {
         </Section>
 
       </main>
+    </div>
+  );
+}
+
+/* ─── Sub-components ─────────────────────────────────────────────────────── */
+
+function Section({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <div className="mb-6">
+      <p className="text-[10px] font-bold text-[#9CA3AF] uppercase tracking-[0.1em] mb-2 ml-[2px]">
+        {title}
+      </p>
+      <div className="bg-white border border-black/[0.07] rounded-[14px] overflow-hidden">
+        {children}
+      </div>
+    </div>
+  );
+}
+
+function InfoRow({
+  icon: Icon, label, value, last = false,
+}: {
+  icon: React.ElementType;
+  label: string;
+  value: string;
+  last?: boolean;
+}) {
+  return (
+    <div className={`flex items-center gap-3 px-4 py-3 ${last ? '' : 'border-b border-black/[0.06]'}`}>
+      <div className="w-8 h-8 rounded-[9px] bg-[#F8F7F4] flex items-center justify-center flex-shrink-0">
+        <Icon size={14} color="#6B7280" />
+      </div>
+      <div className="flex-1 min-w-0">
+        <p className="text-[11px] text-[#9CA3AF] mb-[2px]">{label}</p>
+        <p className="text-[13px] font-semibold text-[#1A1A2E] truncate">{value}</p>
+      </div>
     </div>
   );
 }

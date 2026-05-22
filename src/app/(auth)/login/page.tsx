@@ -1,24 +1,10 @@
 'use client';
 
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Tv, Eye, EyeOff } from 'lucide-react';
 import { useAuthStore } from '@/store/useAuthStore';
 import { loginUser } from '@/services/authService';
-
-/* ─── Palette ── */
-const C = {
-  bg:          '#0a0a0f',
-  surface:     '#13131a',
-  card:        '#1a1a24',
-  border:      'rgba(255,255,255,0.07)',
-  text:        '#f0f0f5',
-  muted:       '#7a7a90',
-  primary:     '#6c63ff',
-  primarySoft: 'rgba(108,99,255,0.15)',
-  error:       '#ef4444',
-  errorSoft:   'rgba(239,68,68,0.12)',
-};
 
 export default function LoginPage() {
   const { setUser, setLoading, setError, isLoading, error } = useAuthStore();
@@ -28,7 +14,6 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [showPass, setShowPass] = useState(false);
   const [shaking, setShaking]   = useState(false);
-  const cardRef = useRef<HTMLDivElement>(null);
 
   const shake = () => {
     setShaking(true);
@@ -61,145 +46,66 @@ export default function LoginPage() {
   };
 
   return (
-    <div style={{
-      minHeight:       '100dvh',
-      backgroundColor: C.bg,
-      fontFamily:      "'DM Sans', -apple-system, sans-serif",
-      display:         'flex',
-      alignItems:      'center',
-      justifyContent:  'center',
-      padding:         24,
-      /* subtle radial glow behind the card */
-      background: `radial-gradient(ellipse 80% 60% at 50% 0%, rgba(108,99,255,0.12) 0%, ${C.bg} 70%)`,
-    }}>
-      <div style={{ width: '100%', maxWidth: 400 }}>
+    <div className="min-h-[100dvh] bg-gradient-to-br from-[#EDE5D8] via-[#F0EAF5] to-[#F8F7F4] flex items-center justify-center p-6 font-sans">
+      <div className="w-full max-w-[380px]">
 
         {/* ── Logo ── */}
-        <div style={{ textAlign: 'center', marginBottom: 36 }}>
-          <div style={{
-            width: 64, height: 64, borderRadius: 18,
-            backgroundColor: C.primary,
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            margin: '0 auto 16px',
-            boxShadow: '0 8px 32px rgba(108,99,255,0.35)',
-          }}>
-            <Tv size={28} color="#fff" />
+        <div className="text-center mb-8">
+          <div className="w-[56px] h-[56px] rounded-[16px] bg-[#6c63ff] flex items-center justify-center mx-auto mb-3 shadow-[0_8px_24px_rgba(108,99,255,0.3)]">
+            <Tv size={24} color="#fff" />
           </div>
-          <h1 style={{
-            fontSize: 28, fontWeight: 800, color: C.text,
-            letterSpacing: -0.5, margin: '0 0 6px',
-          }}>
+          <h1 className="text-[22px] font-extrabold text-[#1A1A2E] tracking-tight mb-1">
             CineExplorer
           </h1>
-          <p style={{ fontSize: 14, color: C.muted, margin: 0 }}>
-            Your personal cinema universe
-          </p>
+          <p className="text-[13px] text-[#9CA3AF]">Your personal cinema universe</p>
         </div>
 
         {/* ── Card ── */}
-        <div
-          ref={cardRef}
-          className={shaking ? 'shake' : ''}
-          style={{
-            backgroundColor: C.card,
-            borderRadius:    20,
-            padding:         28,
-            border:          `1px solid ${C.border}`,
-            boxShadow:       '0 8px 40px rgba(0,0,0,0.4)',
-          }}
-        >
-          <h2 style={{
-            fontSize: 20, fontWeight: 700, color: C.text,
-            margin: '0 0 22px', letterSpacing: -0.3,
-          }}>
+        <div className={`bg-white rounded-[18px] p-6 border border-black/[0.07] ${shaking ? 'animate-shake' : ''}`}>
+          <h2 className="text-[17px] font-extrabold text-[#1A1A2E] tracking-tight mb-5">
             Sign in
           </h2>
 
           {/* Error */}
           {error && (
-            <div style={{
-              backgroundColor: C.errorSoft,
-              borderRadius:    10,
-              padding:         12,
-              marginBottom:    18,
-              borderLeft:      `3px solid ${C.error}`,
-            }}>
-              <p style={{ color: C.error, fontSize: 13, fontWeight: 500, margin: 0 }}>{error}</p>
+            <div className="bg-red-500/[0.08] rounded-[10px] p-3 mb-4 border-l-[3px] border-red-500">
+              <p className="text-[13px] font-medium text-red-500">{error}</p>
             </div>
           )}
 
           {/* Username */}
-          <div style={{ marginBottom: 16 }}>
-            <label style={{
-              fontSize: 12, fontWeight: 600, color: C.muted,
-              display: 'block', marginBottom: 7, letterSpacing: '0.03em',
-            }}>
-              USERNAME
+          <div className="mb-4">
+            <label className="block text-[10px] font-bold text-[#9CA3AF] uppercase tracking-[0.08em] mb-[6px]">
+              Username
             </label>
             <input
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               placeholder="e.g. emilys"
               autoCapitalize="none"
-              style={{
-                width:           '100%',
-                backgroundColor: C.surface,
-                border:          `1px solid ${C.border}`,
-                borderRadius:    12,
-                padding:         '13px 14px',
-                fontSize:        14,
-                color:           C.text,
-                outline:         'none',
-                boxSizing:       'border-box',
-                fontFamily:      "'DM Sans', sans-serif",
-              }}
+              className="w-full bg-[#F8F7F4] border border-black/[0.08] rounded-[10px] px-[13px] py-[11px] text-[13px] text-[#1A1A2E] outline-none placeholder:text-[#C4B5A5] focus:border-[#6c63ff]/40 focus:bg-white transition-colors"
             />
           </div>
 
           {/* Password */}
-          <div style={{ marginBottom: 22 }}>
-            <label style={{
-              fontSize: 12, fontWeight: 600, color: C.muted,
-              display: 'block', marginBottom: 7, letterSpacing: '0.03em',
-            }}>
-              PASSWORD
+          <div className="mb-5">
+            <label className="block text-[10px] font-bold text-[#9CA3AF] uppercase tracking-[0.08em] mb-[6px]">
+              Password
             </label>
-            <div style={{ position: 'relative' }}>
+            <div className="relative">
               <input
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 type={showPass ? 'text' : 'password'}
                 placeholder="••••••••"
                 onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
-                style={{
-                  width:           '100%',
-                  backgroundColor: C.surface,
-                  border:          `1px solid ${C.border}`,
-                  borderRadius:    12,
-                  padding:         '13px 44px 13px 14px',
-                  fontSize:        14,
-                  color:           C.text,
-                  outline:         'none',
-                  boxSizing:       'border-box',
-                  fontFamily:      "'DM Sans', sans-serif",
-                }}
+                className="w-full bg-[#F8F7F4] border border-black/[0.08] rounded-[10px] px-[13px] py-[11px] pr-[40px] text-[13px] text-[#1A1A2E] outline-none placeholder:text-[#C4B5A5] focus:border-[#6c63ff]/40 focus:bg-white transition-colors"
               />
               <button
                 onClick={() => setShowPass((p) => !p)}
-                style={{
-                  position:   'absolute',
-                  right:      12,
-                  top:        '50%',
-                  transform:  'translateY(-50%)',
-                  background: 'none',
-                  border:     'none',
-                  cursor:     'pointer',
-                  color:      C.muted,
-                  display:    'flex',
-                  padding:    0,
-                }}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-[#9CA3AF] hover:text-[#6B7280] transition-colors"
               >
-                {showPass ? <EyeOff size={18} /> : <Eye size={18} />}
+                {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
               </button>
             </div>
           </div>
@@ -208,47 +114,30 @@ export default function LoginPage() {
           <button
             onClick={handleLogin}
             disabled={isLoading}
-            style={{
-              width:           '100%',
-              backgroundColor: C.primary,
-              color:           '#fff',
-              border:          'none',
-              borderRadius:    12,
-              padding:         '14px 0',
-              fontSize:        15,
-              fontWeight:      700,
-              cursor:          isLoading ? 'not-allowed' : 'pointer',
-              opacity:         isLoading ? 0.65 : 1,
-              letterSpacing:   0.2,
-              fontFamily:      "'DM Sans', sans-serif",
-              boxShadow:       isLoading ? 'none' : '0 4px 16px rgba(108,99,255,0.35)',
-            }}
+            className="w-full bg-[#6c63ff] text-white rounded-[10px] py-[13px] text-[13px] font-bold tracking-[0.2px] disabled:opacity-50 hover:bg-[#5b52ee] transition-colors"
           >
             {isLoading ? 'Signing in…' : 'Sign In'}
           </button>
 
           {/* Hint */}
-          <p style={{
-            textAlign: 'center', color: C.muted,
-            fontSize: 12, marginTop: 18, marginBottom: 0,
-          }}>
-            Demo: username <span style={{ color: C.text, fontWeight: 600 }}>emilys</span>
-            {' '}· password <span style={{ color: C.text, fontWeight: 600 }}>emilyspass</span>
+          <p className="text-center text-[11px] text-[#9CA3AF] mt-4">
+            Demo:{' '}
+            <span className="text-[#1A1A2E] font-semibold">emilys</span>
+            {' '}·{' '}
+            <span className="text-[#1A1A2E] font-semibold">emilyspass</span>
           </p>
         </div>
       </div>
 
       <style>{`
         @keyframes shake {
-          0%,100% { transform: translateX(0); }
-          20%      { transform: translateX(-8px); }
-          40%      { transform: translateX(8px); }
-          60%      { transform: translateX(-5px); }
-          80%      { transform: translateX(5px); }
+          0%,100% { transform:translateX(0); }
+          20%      { transform:translateX(-7px); }
+          40%      { transform:translateX(7px); }
+          60%      { transform:translateX(-4px); }
+          80%      { transform:translateX(4px); }
         }
-        .shake { animation: shake 0.4s ease; }
-        input::placeholder { color: #4a4a60; }
-        input:focus { border-color: rgba(108,99,255,0.5) !important; }
+        .animate-shake { animation: shake 0.4s ease; }
       `}</style>
     </div>
   );

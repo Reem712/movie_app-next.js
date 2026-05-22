@@ -73,17 +73,19 @@ export const ThemeContext = createContext<ThemeContextValue>({
 // ── Provider ────────────────────────────────────────────────────────────────
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [themeMode, setThemeModeState] = useState<ThemeMode>('system');
-  const [systemDark, setSystemDark]    = useState(false);
+const [themeMode, setThemeModeState] = useState<ThemeMode>('light');
+const [systemDark, setSystemDark]    = useState(
+  () => typeof window !== 'undefined'
+    ? window.matchMedia('(prefers-color-scheme: dark)').matches
+    : true
+);
 
   // Detect system preference (replaces useColorScheme from RN)
   useEffect(() => {
-    const mq = window.matchMedia('(prefers-color-scheme: dark)');
-    setSystemDark(mq.matches);
-    const handler = (e: MediaQueryListEvent) => setSystemDark(e.matches);
-    mq.addEventListener('change', handler);
-    return () => mq.removeEventListener('change', handler);
-  }, []);
+  const saved = localStorage.getItem('theme-preference') as ThemeMode | null;
+  if (saved) setThemeModeState(saved);
+  else setThemeModeState('dark');
+}, []);
 
   // Rehydrate saved preference (localStorage replaces AsyncStorage)
   useEffect(() => {

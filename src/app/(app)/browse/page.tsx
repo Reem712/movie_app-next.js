@@ -35,7 +35,7 @@ const mapMovie = (m: any): Movie => ({
 export default function BrowsePage() {
   const setSelectedMovie = useMovieStore((s) => s.setSelectedMovie);
   const router           = useRouter();
-  const { colors, isDark } = useTheme();
+  const { isDark }       = useTheme();
 
   const [activeGenre, setActiveGenre] = useState(GENRES[0].key);
   const [view, setView]               = useState<'grid' | 'list'>('grid');
@@ -77,19 +77,21 @@ export default function BrowsePage() {
   const totalPages = Math.ceil(Math.min(total, 10000) / 20);
   const genreMeta  = GENRES.find((g) => g.key === activeGenre)!;
 
+  /* ── Tokens — نفس الـ HomePage ──────────────────────────────── */
   const T = {
-    bg:         isDark ? '#0C0B14' : '#F7F5F0',
-    surface:    isDark ? '#141320' : '#FFFFFF',
-    card:       isDark ? '#1C1A2E' : '#F0EDE8',
-    border:     isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.09)',
-    text:       isDark ? '#EDE9F8' : '#1A1625',
-    sub:        isDark ? '#9490B0' : '#6B6580',
-    muted:      isDark ? '#524F6A' : '#A09BB5',
-    accent:     '#E8A020',
-    accentGlow: isDark ? 'rgba(232,160,32,0.18)' : 'rgba(232,160,32,0.14)',
+    bg:         isDark ? '#0a0a0f' : '#F7F5F0',
+    surface:    isDark ? '#1a1a24' : '#FFFFFF',
+    card:       isDark ? '#13131c' : '#F0EDE8',
+    border:     isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.08)',
+    text:       isDark ? '#f0f0f5' : '#1A1625',
+    sub:        isDark ? '#7a7a90' : '#6B6580',
+    muted:      isDark ? '#55556a' : '#A09BB5',
+    accent:     '#6c63ff',
+    accentGold: '#e2b96f',
+    accentGlow: isDark ? 'rgba(108,99,255,0.18)' : 'rgba(108,99,255,0.12)',
     headerBg:   isDark
-      ? 'linear-gradient(160deg, #1a1030 0%, #0C0B14 60%)'
-      : 'linear-gradient(160deg, #EDE5D8 0%, #F7F5F0 60%)',
+      ? 'linear-gradient(160deg, #1a1040 0%, #0a0a0f 60%)'
+      : 'linear-gradient(160deg, #DDD5F0 0%, #F7F5F0 60%)',
   };
 
   const font = "'Outfit', 'DM Sans', -apple-system, sans-serif";
@@ -97,6 +99,7 @@ export default function BrowsePage() {
   return (
     <div style={{ minHeight: '100dvh', background: T.bg, fontFamily: font, color: T.text }}>
 
+      {/* ── Header ─────────────────────────────────────────────── */}
       <div style={{
         background:   T.headerBg,
         borderBottom: `1px solid ${T.border}`,
@@ -105,16 +108,14 @@ export default function BrowsePage() {
         <div style={{ maxWidth: 1240, margin: '0 auto' }}>
 
           <div style={{
-            display:        'flex',
-            alignItems:     'flex-start',
-            justifyContent: 'space-between',
-            gap:            16,
-            flexWrap:       'wrap',
-            marginBottom:   22,
+            display: 'flex', alignItems: 'flex-start',
+            justifyContent: 'space-between', gap: 16,
+            flexWrap: 'wrap', marginBottom: 22,
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
               <div style={{
-                width: 44, height: 44, borderRadius: 12, background: T.accent,
+                width: 44, height: 44, borderRadius: 12,
+                background: T.accent,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 boxShadow: `0 4px 16px ${T.accentGlow}`,
               }}>
@@ -135,8 +136,10 @@ export default function BrowsePage() {
               </div>
             </div>
 
+            {/* View toggle */}
             <div style={{
-              display: 'flex', background: T.card, border: `1px solid ${T.border}`,
+              display: 'flex', background: T.card,
+              border: `1px solid ${T.border}`,
               borderRadius: 12, overflow: 'hidden', alignSelf: 'flex-start',
             }}>
               {([
@@ -161,6 +164,7 @@ export default function BrowsePage() {
             </div>
           </div>
 
+          {/* Genre tabs */}
           <div style={{
             display: 'flex', gap: 0, overflowX: 'auto', scrollbarWidth: 'none',
           } as React.CSSProperties}>
@@ -186,11 +190,13 @@ export default function BrowsePage() {
         </div>
       </div>
 
+      {/* ── Main ───────────────────────────────────────────────── */}
       <main style={{
         maxWidth: 1240, margin: '0 auto',
         padding: 'clamp(20px,4vw,40px) clamp(18px,5vw,48px)',
       }}>
 
+        {/* Grid view */}
         {view === 'grid' && (
           <div style={{
             display: 'grid',
@@ -213,11 +219,14 @@ export default function BrowsePage() {
                       onClick={() => handlePress(movie)}
                       onMouseEnter={() => setHoveredId(movie.id)}
                       onMouseLeave={() => setHoveredId(null)}
-                      style={{ background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', padding: 0 }}
+                      style={{
+                        background: 'none', border: 'none',
+                        cursor: 'pointer', textAlign: 'left', padding: 0,
+                      }}
                     >
                       <div style={{
-                        width: '100%', aspectRatio: '2/3', borderRadius: 12, overflow: 'hidden',
-                        backgroundColor: T.card,
+                        width: '100%', aspectRatio: '2/3', borderRadius: 12,
+                        overflow: 'hidden', backgroundColor: T.card,
                         border: `1px solid ${hov ? genreMeta.color + '70' : T.border}`,
                         marginBottom: 9, position: 'relative',
                         transform: hov ? 'translateY(-5px) scale(1.01)' : 'none',
@@ -242,11 +251,11 @@ export default function BrowsePage() {
                             display: 'flex', alignItems: 'center', justifyContent: 'center',
                           }}>
                             <div style={{
-                              width: 36, height: 36, borderRadius: '50%', background: T.accent,
+                              width: 36, height: 36, borderRadius: '50%',
+                              background: T.accent,
                               display: 'flex', alignItems: 'center', justifyContent: 'center',
-                              boxShadow: `0 0 20px ${T.accent}aa`,
                             }}>
-                              <svg width="14" height="14" viewBox="0 0 24 24" fill="#000">
+                              <svg width="14" height="14" viewBox="0 0 24 24" fill="#fff">
                                 <polygon points="5,3 19,12 5,21" />
                               </svg>
                             </div>
@@ -257,9 +266,8 @@ export default function BrowsePage() {
                             position: 'absolute', top: 7, left: 7,
                             display: 'flex', alignItems: 'center', gap: 3,
                             background: 'rgba(0,0,0,0.65)', borderRadius: 6, padding: '2px 6px',
-                            backdropFilter: 'blur(6px)',
                           }}>
-                            <span style={{ fontSize: 10, fontWeight: 700, color: '#fff' }}>
+                            <span style={{ fontSize: 10, fontWeight: 700, color: T.accentGold }}>
                               {movie.vote_average!.toFixed(1)}
                             </span>
                           </div>
@@ -296,6 +304,7 @@ export default function BrowsePage() {
           </div>
         )}
 
+        {/* List view */}
         {view === 'list' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             {isLoading
@@ -313,10 +322,11 @@ export default function BrowsePage() {
                       style={{
                         display: 'flex', alignItems: 'center', gap: 14,
                         background: hov
-                          ? isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.03)'
+                          ? isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.03)'
                           : T.surface,
                         border: `1px solid ${hov ? genreMeta.color + '60' : T.border}`,
-                        borderRadius: 14, padding: '12px 16px', cursor: 'pointer', textAlign: 'left',
+                        borderRadius: 14, padding: '12px 16px',
+                        cursor: 'pointer', textAlign: 'left',
                         transform: hov ? 'translateX(5px)' : 'none',
                         boxShadow: hov
                           ? `0 6px 24px rgba(0,0,0,0.14), 0 0 0 1px ${genreMeta.color}30`
@@ -331,7 +341,8 @@ export default function BrowsePage() {
                       }} />
                       <div style={{
                         width: 56, height: 80, borderRadius: 9, overflow: 'hidden',
-                        flexShrink: 0, background: T.card, boxShadow: '0 2px 10px rgba(0,0,0,0.18)',
+                        flexShrink: 0, background: T.card,
+                        boxShadow: '0 2px 10px rgba(0,0,0,0.18)',
                       }}>
                         <img
                           src={getPosterUrl(movie.poster_path, 'w185')}
@@ -356,8 +367,10 @@ export default function BrowsePage() {
                         )}
                         {movie.release_year && (
                           <span style={{
-                            fontSize: 11, fontWeight: 600, color: genreMeta.color,
-                            background: genreMeta.color + '1E', borderRadius: 6, padding: '2px 9px',
+                            fontSize: 11, fontWeight: 600,
+                            color: genreMeta.color,
+                            background: genreMeta.color + '1E',
+                            borderRadius: 6, padding: '2px 9px',
                           }}>
                             {movie.release_year}
                           </span>
@@ -365,12 +378,16 @@ export default function BrowsePage() {
                       </div>
                       {(movie.vote_average ?? 0) > 0 && (
                         <div style={{
-                          display: 'flex', flexDirection: 'column', alignItems: 'center',
-                          justifyContent: 'center', gap: 2,
-                          background: T.accentGlow, borderRadius: 10, padding: '6px 12px',
-                          flexShrink: 0, border: `1px solid ${T.accent}30`,
+                          display: 'flex', flexDirection: 'column',
+                          alignItems: 'center', justifyContent: 'center', gap: 2,
+                          background: 'rgba(226,185,111,0.1)',
+                          border: '1px solid rgba(226,185,111,0.2)',
+                          borderRadius: 10, padding: '6px 12px', flexShrink: 0,
                         }}>
-                          <span style={{ fontSize: 13, fontWeight: 800, color: T.accent, lineHeight: 1 }}>
+                          <span style={{
+                            fontSize: 13, fontWeight: 800,
+                            color: T.accentGold, lineHeight: 1,
+                          }}>
                             {movie.vote_average!.toFixed(1)}
                           </span>
                         </div>
@@ -382,6 +399,7 @@ export default function BrowsePage() {
           </div>
         )}
 
+        {/* Pagination */}
         {!isLoading && totalPages > 1 && (
           <div style={{
             display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -391,11 +409,13 @@ export default function BrowsePage() {
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page === 1}
               style={{
-                display: 'flex', alignItems: 'center', gap: 5, padding: '8px 16px',
-                borderRadius: 10, border: `1px solid ${T.border}`, background: T.surface,
+                display: 'flex', alignItems: 'center', gap: 5,
+                padding: '8px 16px', borderRadius: 10,
+                border: `1px solid ${T.border}`, background: T.surface,
                 color: page === 1 ? T.muted : T.text,
                 cursor: page === 1 ? 'not-allowed' : 'pointer',
-                fontSize: 13, fontWeight: 600, opacity: page === 1 ? 0.4 : 1,
+                fontSize: 13, fontWeight: 600,
+                opacity: page === 1 ? 0.4 : 1,
                 fontFamily: font, transition: 'all 0.15s',
               }}
             >
@@ -415,7 +435,8 @@ export default function BrowsePage() {
                       border: `1px solid ${active ? T.accent : T.border}`,
                       background: active ? T.accent : T.surface,
                       color: active ? '#fff' : T.sub,
-                      cursor: 'pointer', fontSize: 13, fontWeight: active ? 700 : 500,
+                      cursor: 'pointer', fontSize: 13,
+                      fontWeight: active ? 700 : 500,
                       fontFamily: font,
                       boxShadow: active ? `0 4px 14px ${T.accentGlow}` : 'none',
                       transition: 'all 0.15s',
@@ -431,11 +452,13 @@ export default function BrowsePage() {
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               disabled={page === totalPages}
               style={{
-                display: 'flex', alignItems: 'center', gap: 5, padding: '8px 16px',
-                borderRadius: 10, border: `1px solid ${T.border}`, background: T.surface,
+                display: 'flex', alignItems: 'center', gap: 5,
+                padding: '8px 16px', borderRadius: 10,
+                border: `1px solid ${T.border}`, background: T.surface,
                 color: page === totalPages ? T.muted : T.text,
                 cursor: page === totalPages ? 'not-allowed' : 'pointer',
-                fontSize: 13, fontWeight: 600, opacity: page === totalPages ? 0.4 : 1,
+                fontSize: 13, fontWeight: 600,
+                opacity: page === totalPages ? 0.4 : 1,
                 fontFamily: font, transition: 'all 0.15s',
               }}
             >
