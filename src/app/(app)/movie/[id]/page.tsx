@@ -3,7 +3,8 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import {
-  ArrowLeft, Heart, BookmarkPlus, Check, Star, Clock, Calendar, Play,
+  ArrowLeft, Heart, BookmarkPlus, BookmarkCheck, Star, Clock, Calendar, Play,
+  Check, Film,
 } from 'lucide-react';
 import { useMovieStore } from '@/store/useMovieStore';
 import { useFavoritesStore } from '@/store/useFavoritesStore';
@@ -17,37 +18,39 @@ interface MovieDetailProps {
   params: { id: string };
 }
 
+const STATUS_OPTIONS: { key: WatchStatus; label: string; emoji: string }[] = [
+  { key: 'want-to-watch', label: 'Want to Watch', emoji: '🎯' },
+  { key: 'watching',      label: 'Watching',      emoji: '▶' },
+  { key: 'watched',       label: 'Watched',        emoji: '✓'  },
+];
 
 export default function MovieDetailPage({ params }: MovieDetailProps) {
-  const { id } = params;              // ✅ Next.js 15 async params
+  const { id } = params;
   const router       = useRouter();
   const searchParams = useSearchParams();
   const title        = searchParams.get('title') ?? 'Movie Detail';
 
-  /* ── Stores ─────────────────────────────────────────────────── */
   const selectedMovie  = useMovieStore((s) => s.selectedMovie);
-
   const isFavorite     = useFavoritesStore((s) => s.isFavorite);
   const addFavorite    = useFavoritesStore((s) => s.addFavorite);
   const removeFavorite = useFavoritesStore((s) => s.removeFavorite);
+  const isInList       = useWatchlistStore((s) => s.isInList);
+  const addToList      = useWatchlistStore((s) => s.addToList);
+  const removeFromList = useWatchlistStore((s) => s.removeFromList);
+  const getStatus      = useWatchlistStore((s) => s.getStatus);
+  const updateStatus   = useWatchlistStore((s) => s.updateStatus);
 
-  const isInList    = useWatchlistStore((s) => s.isInList);     // ✅ اسم صح
-  const addToList   = useWatchlistStore((s) => s.addToList);
-  const getStatus   = useWatchlistStore((s) => s.getStatus);
-  const updateStatus = useWatchlistStore((s) => s.updateStatus);
-
-  /* ── Local state ─────────────────────────────────────────────── */
-  const [detail, setDetail]     = useState<Partial<Movie>>({});
+  const [detail, setDetail]       = useState<Partial<Movie>>({});
   const [isLoading, setIsLoading] = useState(true);
+  const [heartBurst, setHeartBurst] = useState(false);
+  const [watchlistPop, setWatchlistPop] = useState(false);
 
-  const movie = selectedMovie;
+  const movie   = selectedMovie;
   const movieId = movie?.id ?? 0;
+  const fav     = movie ? isFavorite(movieId) : false;
+  const inList  = movie ? isInList(movieId)   : false;
+  const status  = movie ? getStatus(movieId)  : null;
 
-  const fav    = movie ? isFavorite(movieId) : false;   // ✅ number — يطابق الـ store
-  const inList = movie ? isInList(movieId)   : false;
-  const status = movie ? getStatus(movieId)  : null;
-
-  /* ── Fetch detail ────────────────────────────────────────────── */
   useEffect(() => {
     if (!id) return;
     const load = async () => {
@@ -63,187 +66,457 @@ export default function MovieDetailPage({ params }: MovieDetailProps) {
     load();
   }, [id]);
 
-  /* ── Helpers ─────────────────────────────────────────────────── */
-  const STATUS_OPTIONS: { key: WatchStatus; label: string }[] = [
-    { key: 'want-to-watch', label: 'Want'     },
-    { key: 'watching',      label: 'Watching' },
-    { key: 'watched',       label: 'Done'     },
-  ];
+  const handleFav = () => {
+    if (!movie) return;
+    if (!fav) {
+      setHeartBurst(true);
+      setTimeout(() => setHeartBurst(false), 600);
+      addFavorite(movie);
+    } else {
+      removeFavorite(movieId);
+    }
+  };
+
+  const handleWatchlist = () => {
+    if (!movie) return;
+    if (!inList) {
+      setWatchlistPop(true);
+      setTimeout(() => setWatchlistPop(false), 500);
+      addToList(movie);
+    } else {
+      removeFromList?.(movieId);
+    }
+  };
 
   const runtime = (detail as any).runtime as number | undefined;
   const genres  = (detail as any).genres  as { name: string }[] | undefined;
+  const overview = (detail as any).overview as string | undefined;
 
-  /* ── Not-found guard ─────────────────────────────────────────── */
+  const posterUrl = getPosterUrl(movie?.poster_path, 'w500');
+
   if (!movie) {
     return (
-      <div className="min-h-[100dvh] bg-[#0a0a0f] p-6 text-[#f0f0f5]">
-        <button
-          onClick={() => router.back()}
-          className="text-[14px] text-[#6c63ff] hover:underline"
-        >
-          ← Back
-        </button>
-        <p className="mt-4 text-[#7a7a90]">Movie not found.</p>
+      <div style={{
+        minHeight: '100dvh', background: '#0d0c18',
+        display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+        fontFamily: "'Outfit', sans-serif", color: '#fff', gap: 16,
+      }}>
+        <Film size={40} color="#6c63ff" strokeWidth={1.5} />
+        <p style={{ fontSize: 15, color: '#9490B0' }}>Movie not found.</p>
+        <button onClick={() => router.back()} style={{
+          padding: '10px 22px', borderRadius: 12, background: '#6c63ff',
+          border: 'none', color: '#fff', fontSize: 13, fontWeight: 700,
+          cursor: 'pointer', fontFamily: 'inherit',
+        }}>Go Back</button>
       </div>
     );
   }
 
-  /* ── Render ──────────────────────────────────────────────────── */
   return (
-    <div className="min-h-[100dvh] bg-[#0a0a0f] font-sans text-[#f0f0f5]">
+    <div style={{
+      minHeight: '100dvh',
+      background: '#0d0c18',
+      fontFamily: "'Outfit', 'DM Sans', -apple-system, sans-serif",
+      color: '#f0eef8',
+      overflowX: 'hidden',
+    }}>
 
-      {/* Header */}
-      <header className="sticky top-0 z-20 flex items-center gap-3 border-b border-white/5 bg-[#0a0a0f]/85 px-5 py-3.5 backdrop-blur-md">
-        <button
-          onClick={() => router.back()}
-          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-white/5 bg-[#1a1a24] text-[#f0f0f5] transition-colors hover:bg-white/5"
-        >
-          <ArrowLeft size={18} />
+      {/* ── Cinematic blurred poster bg ── */}
+      <div style={{
+        position: 'fixed', inset: 0, zIndex: 0, pointerEvents: 'none',
+      }}>
+        <img
+          src={posterUrl}
+          alt=""
+          style={{
+            width: '100%', height: '100%', objectFit: 'cover',
+            filter: 'blur(60px) saturate(1.4) brightness(0.22)',
+            transform: 'scale(1.1)',
+          }}
+        />
+        <div style={{
+          position: 'absolute', inset: 0,
+          background: 'linear-gradient(to bottom, rgba(13,12,24,0.55) 0%, rgba(13,12,24,0.92) 55%, #0d0c18 100%)',
+        }} />
+      </div>
+
+      {/* ── Sticky header ── */}
+      <header style={{
+        position: 'sticky', top: 0, zIndex: 40,
+        display: 'flex', alignItems: 'center', gap: 12,
+        padding: '12px 20px',
+        background: 'rgba(13,12,24,0.72)',
+        backdropFilter: 'blur(20px)',
+        borderBottom: '1px solid rgba(255,255,255,0.07)',
+      }}>
+        <button onClick={() => router.back()} style={{
+          width: 38, height: 38, borderRadius: 12, flexShrink: 0,
+          border: '1px solid rgba(255,255,255,0.1)',
+          background: 'rgba(255,255,255,0.06)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          cursor: 'pointer', color: '#f0eef8', transition: 'background 0.15s',
+        }}>
+          <ArrowLeft size={17} />
         </button>
-        <span className="flex-1 truncate text-[15px] font-semibold">{title}</span>
+        <span style={{
+          flex: 1, fontSize: 14, fontWeight: 700, color: '#f0eef8',
+          overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+        }}>{title}</span>
       </header>
 
-      {/* Hero */}
-      <div className="relative h-[260px] overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#1a1040] via-[#0d1a30] to-[#1a0d20]" />
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent from-30% to-[#0a0a0f]" />
+      {/* ── Content ── */}
+      <div style={{ position: 'relative', zIndex: 1 }}>
 
-        <div className="relative z-10 flex h-full items-end gap-4 px-5 pt-7">
-          <div className="relative top-[30px] h-[165px] w-[110px] shrink-0 overflow-hidden rounded-xl border-2 border-white/10 bg-[#1a1a24] shadow-[0_20px_60px_rgba(0,0,0,0.7)]">
+        {/* ── Hero area: poster + title ── */}
+        <div style={{
+          display: 'flex', gap: 'clamp(18px, 4vw, 36px)',
+          padding: 'clamp(28px,5vw,56px) clamp(18px,5vw,40px) 0',
+          maxWidth: 860, margin: '0 auto',
+          flexWrap: 'wrap',
+        }}>
+
+          {/* Poster */}
+          <div style={{
+            flexShrink: 0,
+            width: 'clamp(130px, 22vw, 200px)',
+            borderRadius: 18,
+            overflow: 'hidden',
+            boxShadow: '0 28px 72px rgba(0,0,0,0.65), 0 0 0 1px rgba(255,255,255,0.08)',
+            animation: 'cin-rise 0.5s cubic-bezier(0.34,1.56,0.64,1) both',
+          }}>
             <img
-              src={getPosterUrl(movie.poster_path, 'w342')}
+              src={posterUrl}
               alt={movie.title}
-              className="h-full w-full object-cover"
+              style={{ width: '100%', display: 'block', objectFit: 'cover' }}
             />
           </div>
 
-          <div className="pb-3">
-            <span className="mb-2 inline-block rounded-md bg-[#e2b96f]/10 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wider text-[#e2b96f]">
-              {genres?.[0]?.name ?? 'Movie'}
-            </span>
-            <h2 className="text-[30px] font-extrabold leading-tight tracking-tight text-white">
+          {/* Title block */}
+          <div style={{
+            flex: '1 1 220px', minWidth: 0,
+            display: 'flex', flexDirection: 'column', justifyContent: 'flex-end',
+            paddingBottom: 4,
+            animation: 'cin-fade-up 0.45s 0.1s ease both',
+          }}>
+            {/* Genre badge */}
+            {genres?.[0] && (
+              <span style={{
+                display: 'inline-block', marginBottom: 12,
+                padding: '4px 12px', borderRadius: 20,
+                background: 'rgba(226,185,111,0.15)',
+                border: '1px solid rgba(226,185,111,0.28)',
+                fontSize: 10, fontWeight: 800,
+                letterSpacing: '0.08em', textTransform: 'uppercase',
+                color: '#e2b96f',
+                alignSelf: 'flex-start',
+              }}>
+                {genres[0].name}
+              </span>
+            )}
+
+            <h1 style={{
+              fontSize: 'clamp(22px, 4vw, 38px)',
+              fontWeight: 900, lineHeight: 1.1,
+              letterSpacing: -0.8, margin: '0 0 8px',
+              color: '#fff',
+            }}>
               {movie.title}
-            </h2>
-            <p className="mt-1 text-[13px] text-[#7a7a90]">
+            </h1>
+
+            <p style={{ fontSize: 13, color: '#7a7898', margin: '0 0 18px' }}>
               {movie.director ?? 'Unknown Director'}
               {movie.release_year ? ` · ${movie.release_year}` : ''}
             </p>
+
+            {/* Meta chips */}
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+              {(movie.vote_average ?? 0) > 0 && (
+                <div style={{
+                  display: 'flex', alignItems: 'center', gap: 5,
+                  padding: '6px 12px', borderRadius: 20,
+                  background: 'rgba(226,185,111,0.12)',
+                  border: '1px solid rgba(226,185,111,0.22)',
+                }}>
+                  <Star size={12} fill="#e2b96f" color="#e2b96f" />
+                  <span style={{ fontSize: 12, fontWeight: 800, color: '#e2b96f' }}>
+                    {movie.vote_average!.toFixed(1)}
+                  </span>
+                </div>
+              )}
+              {runtime && (
+                <div style={{
+                  display: 'flex', alignItems: 'center', gap: 5,
+                  padding: '6px 12px', borderRadius: 20,
+                  background: 'rgba(255,255,255,0.06)',
+                  border: '1px solid rgba(255,255,255,0.09)',
+                }}>
+                  <Clock size={12} color="#9490B0" />
+                  <span style={{ fontSize: 12, color: '#9490B0', fontWeight: 600 }}>
+                    {Math.floor(runtime / 60)}h {runtime % 60}m
+                  </span>
+                </div>
+              )}
+              {movie.release_year && (
+                <div style={{
+                  display: 'flex', alignItems: 'center', gap: 5,
+                  padding: '6px 12px', borderRadius: 20,
+                  background: 'rgba(255,255,255,0.06)',
+                  border: '1px solid rgba(255,255,255,0.09)',
+                }}>
+                  <Calendar size={12} color="#9490B0" />
+                  <span style={{ fontSize: 12, color: '#9490B0', fontWeight: 600 }}>
+                    {movie.release_year}
+                  </span>
+                </div>
+              )}
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Body */}
-      <main className="mt-12 px-5 pb-10">
+        {/* ── Action buttons ── */}
+        <div style={{
+          maxWidth: 860, margin: '0 auto',
+          padding: '24px clamp(18px,5vw,40px) 0',
+          display: 'flex', gap: 10, flexWrap: 'wrap',
+          animation: 'cin-fade-up 0.45s 0.2s ease both',
+        }}>
 
-        {/* Meta chips */}
-        <div className="mb-5 flex flex-wrap items-center gap-3.5">
-          <div className="flex items-center gap-1 rounded-full border border-[#e2b96f]/20 bg-[#e2b96f]/10 px-3 py-1 text-[13px] font-bold text-[#e2b96f]">
-            <Star size={13} fill="#e2b96f" stroke="none" />
-            {movie.vote_average?.toFixed(1) ?? 'N/A'}
-          </div>
-
-          {runtime && (
-            <div className="flex items-center gap-1.5 text-[13px] text-[#7a7a90]">
-              <Clock size={13} className="text-[#e2b96f]" />
-              {Math.floor(runtime / 60)}h {runtime % 60}m
-            </div>
-          )}
-
-          {movie.release_year && (
-            <div className="flex items-center gap-1.5 text-[13px] text-[#7a7a90]">
-              <Calendar size={13} className="text-[#e2b96f]" />
-              {movie.release_year}
-            </div>
-          )}
-        </div>
-
-        {/* Action buttons */}
-        <div className="mb-5 flex gap-2.5">
-          <button className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-[#6c63ff] py-[13px] text-[14px] font-semibold text-white transition-all hover:bg-[#5b54ff]">
-            <Play size={15} fill="#fff" stroke="none" />
+          {/* Watch Now */}
+          <button style={{
+            flex: '1 1 140px',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+            padding: '14px 20px', borderRadius: 14,
+            background: 'linear-gradient(135deg, #7c74ff 0%, #5b52ee 100%)',
+            border: 'none', color: '#fff',
+            fontSize: 14, fontWeight: 800,
+            cursor: 'pointer', fontFamily: 'inherit',
+            boxShadow: '0 8px 28px rgba(108,99,255,0.38)',
+            transition: 'transform 0.15s, box-shadow 0.15s',
+          }}
+            onMouseEnter={e => (e.currentTarget.style.transform = 'translateY(-2px)', e.currentTarget.style.boxShadow = '0 14px 36px rgba(108,99,255,0.48)')}
+            onMouseLeave={e => (e.currentTarget.style.transform = 'none', e.currentTarget.style.boxShadow = '0 8px 28px rgba(108,99,255,0.38)')}
+          >
+            <Play size={15} fill="#fff" color="#fff" />
             Watch Now
           </button>
 
+          {/* Watchlist button */}
           <button
-            onClick={() => { if (!inList) addToList(movie); }}
-            className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-white/5 bg-[#1a1a24] py-[13px] text-[14px] font-semibold text-[#7a7a90] transition-all hover:bg-white/5"
+            onClick={handleWatchlist}
+            style={{
+              flex: '1 1 120px',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+              padding: '14px 20px', borderRadius: 14, cursor: 'pointer',
+              fontFamily: 'inherit', fontSize: 13, fontWeight: 700,
+              transition: 'all 0.2s cubic-bezier(0.34,1.56,0.64,1)',
+              border: inList
+                ? '1px solid rgba(108,99,255,0.5)'
+                : '1px solid rgba(255,255,255,0.1)',
+              background: inList
+                ? 'rgba(108,99,255,0.18)'
+                : 'rgba(255,255,255,0.06)',
+              color: inList ? '#a89fff' : '#9490B0',
+              transform: watchlistPop ? 'scale(1.07)' : 'scale(1)',
+              boxShadow: inList ? '0 0 0 3px rgba(108,99,255,0.15)' : 'none',
+            }}
           >
-            {inList ? <Check size={15} /> : <BookmarkPlus size={15} />}
-            {inList ? 'In List' : 'Watchlist'}
+            {inList
+              ? <BookmarkCheck size={15} color="#a89fff" />
+              : <BookmarkPlus size={15} />
+            }
+            {inList ? 'In Watchlist' : 'Add to List'}
           </button>
 
+          {/* Heart / Favorite */}
           <button
-            onClick={() => fav ? removeFavorite(movieId) : addFavorite(movie)}
-            className={`flex flex-none basis-[52px] items-center justify-center rounded-xl border py-[13px] transition-all ${
-              fav
-                ? 'border-red-500/30 bg-red-500/20 text-red-500'
-                : 'border-red-500/20 bg-red-500/10 text-red-500 hover:bg-red-500/20'
-            }`}
+            onClick={handleFav}
+            style={{
+              width: 52, height: 52, borderRadius: 14, flexShrink: 0,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              cursor: 'pointer', fontFamily: 'inherit',
+              border: fav ? '1px solid rgba(239,68,68,0.4)' : '1px solid rgba(255,255,255,0.1)',
+              background: fav ? 'rgba(239,68,68,0.14)' : 'rgba(255,255,255,0.06)',
+              transition: 'all 0.2s cubic-bezier(0.34,1.56,0.64,1)',
+              transform: heartBurst ? 'scale(1.22)' : 'scale(1)',
+              boxShadow: fav ? '0 0 0 4px rgba(239,68,68,0.12)' : 'none',
+              position: 'relative', overflow: 'visible',
+            }}
           >
-            <Heart size={15} fill={fav ? '#ef4444' : 'none'} />
+            <Heart
+              size={18}
+              fill={fav ? '#ef4444' : 'none'}
+              color={fav ? '#ef4444' : '#9490B0'}
+              style={{
+                transition: 'fill 0.18s ease, color 0.18s ease, transform 0.3s cubic-bezier(0.34,1.56,0.64,1)',
+                transform: heartBurst ? 'scale(1.3)' : 'scale(1)',
+                filter: fav ? 'drop-shadow(0 0 6px rgba(239,68,68,0.55))' : 'none',
+              }}
+            />
+            {/* Burst particles */}
+            {heartBurst && (
+              <span style={{
+                position: 'absolute', inset: 0,
+                borderRadius: '50%',
+                animation: 'cin-burst 0.5s ease forwards',
+                pointerEvents: 'none',
+                background: 'radial-gradient(circle, rgba(239,68,68,0.45) 0%, transparent 70%)',
+              }} />
+            )}
           </button>
         </div>
 
-        {/* Status selector — فقط لو الفيلم في الـ watchlist */}
+        {/* ── Watch status selector ── */}
         {inList && (
-          <div className="mb-6 flex gap-2">
-            {STATUS_OPTIONS.map(({ key, label }) => (
-              <button
-                key={key}
-                onClick={() => updateStatus(movieId, key)}
-                className={`flex-1 rounded-xl border py-2.5 text-[12px] font-semibold transition-colors ${
-                  status === key
-                    ? 'border-[#6c63ff] bg-[#6c63ff] text-white'
-                    : 'border-white/5 bg-transparent text-[#7a7a90] hover:bg-white/5'
-                }`}
-              >
-                {label}
-              </button>
-            ))}
+          <div style={{
+            maxWidth: 860, margin: '16px auto 0',
+            padding: '0 clamp(18px,5vw,40px)',
+            animation: 'cin-fade-up 0.3s ease both',
+          }}>
+            <p style={{
+              fontSize: 10, fontWeight: 700, letterSpacing: '0.08em',
+              textTransform: 'uppercase', color: '#55556a', marginBottom: 10,
+            }}>
+              Watch Status
+            </p>
+            <div style={{ display: 'flex', gap: 8 }}>
+              {STATUS_OPTIONS.map(({ key, label, emoji }) => {
+                const active = status === key;
+                return (
+                  <button
+                    key={key}
+                    onClick={() => updateStatus(movieId, key)}
+                    style={{
+                      flex: 1, padding: '10px 6px', borderRadius: 12,
+                      border: active
+                        ? '1px solid rgba(108,99,255,0.6)'
+                        : '1px solid rgba(255,255,255,0.08)',
+                      background: active
+                        ? 'linear-gradient(135deg, rgba(108,99,255,0.28), rgba(92,83,238,0.18))'
+                        : 'rgba(255,255,255,0.04)',
+                      color: active ? '#c4bfff' : '#55556a',
+                      fontSize: 12, fontWeight: 700,
+                      cursor: 'pointer', fontFamily: 'inherit',
+                      transition: 'all 0.18s cubic-bezier(0.34,1.56,0.64,1)',
+                      display: 'flex', flexDirection: 'column',
+                      alignItems: 'center', gap: 4,
+                      boxShadow: active ? '0 0 0 3px rgba(108,99,255,0.12)' : 'none',
+                      transform: active ? 'translateY(-1px)' : 'none',
+                    }}
+                  >
+                    <span style={{ fontSize: 16 }}>{emoji}</span>
+                    <span>{label}</span>
+                    {active && (
+                      <span style={{
+                        width: 16, height: 2, borderRadius: 1,
+                        background: '#7c74ff', display: 'block',
+                      }} />
+                    )}
+                  </button>
+                );
+              })}
+            </div>
           </div>
         )}
 
-        {/* Overview */}
-        <h3 className="mb-2.5 text-[11px] font-bold uppercase tracking-widest text-[#7a7a90]">
-          Overview
-        </h3>
+        {/* ── Divider ── */}
+        <div style={{
+          maxWidth: 860, margin: '28px auto 0',
+          padding: '0 clamp(18px,5vw,40px)',
+        }}>
+          <div style={{ height: 1, background: 'rgba(255,255,255,0.07)' }} />
+        </div>
 
-        {isLoading ? (
-          <div className="mb-6 flex flex-col gap-2.5">
-            {[100, 85, 92].map((w, i) => (
-              <div key={i} className="h-[14px] rounded-full bg-white/5" style={{ width: `${w}%` }} />
-            ))}
-          </div>
-        ) : (detail as any).overview ? (
-          <p className="mb-6 text-[14px] leading-relaxed text-[#f0f0f5]/75">
-            {(detail as any).overview}
+        {/* ── Overview ── */}
+        <div style={{
+          maxWidth: 860, margin: '24px auto 0',
+          padding: '0 clamp(18px,5vw,40px)',
+          animation: 'cin-fade-up 0.45s 0.3s ease both',
+        }}>
+          <p style={{
+            fontSize: 10, fontWeight: 700, letterSpacing: '0.09em',
+            textTransform: 'uppercase', color: '#55556a', marginBottom: 12,
+          }}>
+            Overview
           </p>
-        ) : (
-          <p className="mb-6 text-[14px] italic leading-relaxed text-[#f0f0f5]/75">
-            No overview available.
-          </p>
-        )}
 
-        {/* Genres */}
+          {isLoading ? (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+              {[100, 88, 74].map((w, i) => (
+                <div key={i} style={{
+                  height: 13, borderRadius: 6,
+                  background: 'rgba(255,255,255,0.07)',
+                  width: `${w}%`,
+                  animation: `cin-shimmer 1.4s ${i * 0.15}s ease-in-out infinite`,
+                }} />
+              ))}
+            </div>
+          ) : overview ? (
+            <p style={{
+              fontSize: 14, lineHeight: 1.75, color: '#9490B0',
+              margin: 0,
+            }}>
+              {overview}
+            </p>
+          ) : (
+            <p style={{ fontSize: 14, color: '#55556a', fontStyle: 'italic', margin: 0 }}>
+              No overview available.
+            </p>
+          )}
+        </div>
+
+        {/* ── Genres ── */}
         {genres && genres.length > 0 && (
-          <>
-            <div className="my-5 h-px bg-white/5" />
-            <h3 className="mb-2.5 text-[11px] font-bold uppercase tracking-widest text-[#7a7a90]">
+          <div style={{
+            maxWidth: 860, margin: '28px auto 0',
+            padding: '0 clamp(18px,5vw,40px)',
+            animation: 'cin-fade-up 0.45s 0.35s ease both',
+          }}>
+            <div style={{ height: 1, background: 'rgba(255,255,255,0.07)', marginBottom: 24 }} />
+            <p style={{
+              fontSize: 10, fontWeight: 700, letterSpacing: '0.09em',
+              textTransform: 'uppercase', color: '#55556a', marginBottom: 12,
+            }}>
               Genres
-            </h3>
-            <div className="mb-6 flex flex-wrap gap-2">
+            </p>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
               {genres.slice(0, 8).map((g, idx) => (
-                <span
-                  key={idx}
-                  className="rounded-full border border-white/5 bg-[#1a1a24] px-3 py-1.5 text-[12px] font-medium text-[#7a7a90]"
-                >
+                <span key={idx} style={{
+                  padding: '7px 16px', borderRadius: 20,
+                  border: '1px solid rgba(255,255,255,0.09)',
+                  background: 'rgba(255,255,255,0.05)',
+                  fontSize: 12, fontWeight: 600, color: '#9490B0',
+                }}>
                   {typeof g === 'string' ? g : g.name}
                 </span>
               ))}
             </div>
-          </>
+          </div>
         )}
-      </main>
+
+        {/* Bottom padding */}
+        <div style={{ height: 56 }} />
+      </div>
+
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap');
+
+        @keyframes cin-rise {
+          from { opacity: 0; transform: translateY(28px) scale(0.95); }
+          to   { opacity: 1; transform: translateY(0)    scale(1); }
+        }
+        @keyframes cin-fade-up {
+          from { opacity: 0; transform: translateY(14px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes cin-burst {
+          0%   { transform: scale(0.6); opacity: 1; }
+          100% { transform: scale(2.4); opacity: 0; }
+        }
+        @keyframes cin-shimmer {
+          0%, 100% { opacity: 0.5; }
+          50%       { opacity: 1;   }
+        }
+      `}</style>
     </div>
   );
 }

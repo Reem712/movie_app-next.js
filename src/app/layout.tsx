@@ -1,10 +1,9 @@
 import type { Metadata } from 'next';
-import './globals.css';
 import { ThemeProvider } from '@/context/ThemeContext';
 
 export const metadata: Metadata = {
-  title: 'Books Explorer',
-  description: 'Your personal reading universe',
+  title: 'CineExplorer',
+  description: 'Your personal cinema universe',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
