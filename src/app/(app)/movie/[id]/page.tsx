@@ -97,12 +97,12 @@ export default function MovieDetailPage({ params }: MovieDetailProps) {
   if (!movie) {
     return (
       <div style={{
-        minHeight: '100dvh', background: '#0d0c18',
+        minHeight: '100dvh', background: '#F7F5F0',
         display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-        fontFamily: "'Outfit', sans-serif", color: '#fff', gap: 16,
+        fontFamily: "'Outfit', sans-serif", color: '#1A1625', gap: 16,
       }}>
         <Film size={40} color="#6c63ff" strokeWidth={1.5} />
-        <p style={{ fontSize: 15, color: '#9490B0' }}>Movie not found.</p>
+        <p style={{ fontSize: 15, color: '#6B6580' }}>Movie not found.</p>
         <button onClick={() => router.back()} style={{
           padding: '10px 22px', borderRadius: 12, background: '#6c63ff',
           border: 'none', color: '#fff', fontSize: 13, fontWeight: 700,
@@ -115,9 +115,9 @@ export default function MovieDetailPage({ params }: MovieDetailProps) {
   return (
     <div style={{
       minHeight: '100dvh',
-      background: '#0d0c18',
+      background: '#F7F5F0',
       fontFamily: "'Outfit', 'DM Sans', -apple-system, sans-serif",
-      color: '#f0eef8',
+      color: '#1A1625',
       overflowX: 'hidden',
     }}>
 
@@ -130,13 +130,13 @@ export default function MovieDetailPage({ params }: MovieDetailProps) {
           alt=""
           style={{
             width: '100%', height: '100%', objectFit: 'cover',
-            filter: 'blur(60px) saturate(1.4) brightness(0.22)',
+            filter: 'blur(60px) saturate(0.9) brightness(0.88)',
             transform: 'scale(1.1)',
           }}
         />
         <div style={{
           position: 'absolute', inset: 0,
-          background: 'linear-gradient(to bottom, rgba(13,12,24,0.55) 0%, rgba(13,12,24,0.92) 55%, #0d0c18 100%)',
+          background: 'linear-gradient(to bottom, rgba(247,245,240,0.3) 0%, rgba(247,245,240,0.88) 55%, #F7F5F0 100%)',
         }} />
       </div>
 
@@ -145,21 +145,21 @@ export default function MovieDetailPage({ params }: MovieDetailProps) {
         position: 'sticky', top: 0, zIndex: 40,
         display: 'flex', alignItems: 'center', gap: 12,
         padding: '12px 20px',
-        background: 'rgba(13,12,24,0.72)',
+        background: 'rgba(247,245,240,0.88)',
         backdropFilter: 'blur(20px)',
-        borderBottom: '1px solid rgba(255,255,255,0.07)',
+        borderBottom: '1px solid rgba(0,0,0,0.07)',
       }}>
         <button onClick={() => router.back()} style={{
           width: 38, height: 38, borderRadius: 12, flexShrink: 0,
-          border: '1px solid rgba(255,255,255,0.1)',
-          background: 'rgba(255,255,255,0.06)',
+          border: '1px solid rgba(0,0,0,0.09)',
+          background: 'rgba(0,0,0,0.04)',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          cursor: 'pointer', color: '#f0eef8', transition: 'background 0.15s',
+          cursor: 'pointer', color: '#1A1625', transition: 'background 0.15s',
         }}>
           <ArrowLeft size={17} />
         </button>
         <span style={{
-          flex: 1, fontSize: 14, fontWeight: 700, color: '#f0eef8',
+          flex: 1, fontSize: 14, fontWeight: 700, color: '#1A1625',
           overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
         }}>{title}</span>
       </header>
@@ -181,7 +181,7 @@ export default function MovieDetailPage({ params }: MovieDetailProps) {
             width: 'clamp(130px, 22vw, 200px)',
             borderRadius: 18,
             overflow: 'hidden',
-            boxShadow: '0 28px 72px rgba(0,0,0,0.65), 0 0 0 1px rgba(255,255,255,0.08)',
+            boxShadow: '0 12px 40px rgba(0,0,0,0.14), 0 0 0 1px rgba(0,0,0,0.07)',
             animation: 'cin-rise 0.5s cubic-bezier(0.34,1.56,0.64,1) both',
           }}>
             <img
@@ -218,12 +218,12 @@ export default function MovieDetailPage({ params }: MovieDetailProps) {
               fontSize: 'clamp(22px, 4vw, 38px)',
               fontWeight: 900, lineHeight: 1.1,
               letterSpacing: -0.8, margin: '0 0 8px',
-              color: '#fff',
+              color: '#1A1625',
             }}>
               {movie.title}
             </h1>
 
-            <p style={{ fontSize: 13, color: '#7a7898', margin: '0 0 18px' }}>
+            <p style={{ fontSize: 13, color: '#6B6580', margin: '0 0 18px' }}>
               {movie.director ?? 'Unknown Director'}
               {movie.release_year ? ` · ${movie.release_year}` : ''}
             </p>
@@ -247,11 +247,11 @@ export default function MovieDetailPage({ params }: MovieDetailProps) {
                 <div style={{
                   display: 'flex', alignItems: 'center', gap: 5,
                   padding: '6px 12px', borderRadius: 20,
-                  background: 'rgba(255,255,255,0.06)',
-                  border: '1px solid rgba(255,255,255,0.09)',
+                  background: 'rgba(0,0,0,0.04)',
+                  border: '1px solid rgba(0,0,0,0.08)',
                 }}>
-                  <Clock size={12} color="#9490B0" />
-                  <span style={{ fontSize: 12, color: '#9490B0', fontWeight: 600 }}>
+                  <Clock size={12} color="#6B6580" />
+                  <span style={{ fontSize: 12, color: '#6B6580', fontWeight: 600 }}>
                     {Math.floor(runtime / 60)}h {runtime % 60}m
                   </span>
                 </div>
@@ -260,11 +260,11 @@ export default function MovieDetailPage({ params }: MovieDetailProps) {
                 <div style={{
                   display: 'flex', alignItems: 'center', gap: 5,
                   padding: '6px 12px', borderRadius: 20,
-                  background: 'rgba(255,255,255,0.06)',
-                  border: '1px solid rgba(255,255,255,0.09)',
+                  background: 'rgba(0,0,0,0.04)',
+                  border: '1px solid rgba(0,0,0,0.08)',
                 }}>
-                  <Calendar size={12} color="#9490B0" />
-                  <span style={{ fontSize: 12, color: '#9490B0', fontWeight: 600 }}>
+                  <Calendar size={12} color="#6B6580" />
+                  <span style={{ fontSize: 12, color: '#6B6580', fontWeight: 600 }}>
                     {movie.release_year}
                   </span>
                 </div>
@@ -311,10 +311,10 @@ export default function MovieDetailPage({ params }: MovieDetailProps) {
               transition: 'all 0.2s cubic-bezier(0.34,1.56,0.64,1)',
               border: inList
                 ? '1px solid rgba(108,99,255,0.5)'
-                : '1px solid rgba(255,255,255,0.1)',
+                : '1px solid rgba(0,0,0,0.09)',
               background: inList
                 ? 'rgba(108,99,255,0.18)'
-                : 'rgba(255,255,255,0.06)',
+                : 'rgba(0,0,0,0.04)',
               color: inList ? '#a89fff' : '#9490B0',
               transform: watchlistPop ? 'scale(1.07)' : 'scale(1)',
               boxShadow: inList ? '0 0 0 3px rgba(108,99,255,0.15)' : 'none',
@@ -334,8 +334,8 @@ export default function MovieDetailPage({ params }: MovieDetailProps) {
               width: 52, height: 52, borderRadius: 14, flexShrink: 0,
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               cursor: 'pointer', fontFamily: 'inherit',
-              border: fav ? '1px solid rgba(239,68,68,0.4)' : '1px solid rgba(255,255,255,0.1)',
-              background: fav ? 'rgba(239,68,68,0.14)' : 'rgba(255,255,255,0.06)',
+              border: fav ? '1px solid rgba(239,68,68,0.4)' : '1px solid rgba(0,0,0,0.09)',
+              background: fav ? 'rgba(239,68,68,0.14)' : 'rgba(0,0,0,0.04)',
               transition: 'all 0.2s cubic-bezier(0.34,1.56,0.64,1)',
               transform: heartBurst ? 'scale(1.22)' : 'scale(1)',
               boxShadow: fav ? '0 0 0 4px rgba(239,68,68,0.12)' : 'none',
@@ -374,7 +374,7 @@ export default function MovieDetailPage({ params }: MovieDetailProps) {
           }}>
             <p style={{
               fontSize: 10, fontWeight: 700, letterSpacing: '0.08em',
-              textTransform: 'uppercase', color: '#55556a', marginBottom: 10,
+              textTransform: 'uppercase', color: '#A09BB5', marginBottom: 10,
             }}>
               Watch Status
             </p>
@@ -389,10 +389,10 @@ export default function MovieDetailPage({ params }: MovieDetailProps) {
                       flex: 1, padding: '10px 6px', borderRadius: 12,
                       border: active
                         ? '1px solid rgba(108,99,255,0.6)'
-                        : '1px solid rgba(255,255,255,0.08)',
+                        : '1px solid rgba(0,0,0,0.07)',
                       background: active
-                        ? 'linear-gradient(135deg, rgba(108,99,255,0.28), rgba(92,83,238,0.18))'
-                        : 'rgba(255,255,255,0.04)',
+                        ? 'rgba(108,99,255,0.1)'
+                        : 'rgba(0,0,0,0.03)',
                       color: active ? '#c4bfff' : '#55556a',
                       fontSize: 12, fontWeight: 700,
                       cursor: 'pointer', fontFamily: 'inherit',
@@ -408,7 +408,7 @@ export default function MovieDetailPage({ params }: MovieDetailProps) {
                     {active && (
                       <span style={{
                         width: 16, height: 2, borderRadius: 1,
-                        background: '#7c74ff', display: 'block',
+                        background: '#6c63ff', display: 'block',
                       }} />
                     )}
                   </button>
@@ -423,7 +423,7 @@ export default function MovieDetailPage({ params }: MovieDetailProps) {
           maxWidth: 860, margin: '28px auto 0',
           padding: '0 clamp(18px,5vw,40px)',
         }}>
-          <div style={{ height: 1, background: 'rgba(255,255,255,0.07)' }} />
+          <div style={{ height: 1, background: 'rgba(0,0,0,0.07)' }} />
         </div>
 
         {/* ── Overview ── */}
@@ -434,7 +434,7 @@ export default function MovieDetailPage({ params }: MovieDetailProps) {
         }}>
           <p style={{
             fontSize: 10, fontWeight: 700, letterSpacing: '0.09em',
-            textTransform: 'uppercase', color: '#55556a', marginBottom: 12,
+            textTransform: 'uppercase', color: '#A09BB5', marginBottom: 12,
           }}>
             Overview
           </p>
@@ -444,7 +444,7 @@ export default function MovieDetailPage({ params }: MovieDetailProps) {
               {[100, 88, 74].map((w, i) => (
                 <div key={i} style={{
                   height: 13, borderRadius: 6,
-                  background: 'rgba(255,255,255,0.07)',
+                  background: 'rgba(0,0,0,0.07)',
                   width: `${w}%`,
                   animation: `cin-shimmer 1.4s ${i * 0.15}s ease-in-out infinite`,
                 }} />
@@ -452,13 +452,13 @@ export default function MovieDetailPage({ params }: MovieDetailProps) {
             </div>
           ) : overview ? (
             <p style={{
-              fontSize: 14, lineHeight: 1.75, color: '#9490B0',
+              fontSize: 14, lineHeight: 1.75, color: '#6B6580',
               margin: 0,
             }}>
               {overview}
             </p>
           ) : (
-            <p style={{ fontSize: 14, color: '#55556a', fontStyle: 'italic', margin: 0 }}>
+            <p style={{ fontSize: 14, color: '#A09BB5', fontStyle: 'italic', margin: 0 }}>
               No overview available.
             </p>
           )}
@@ -471,10 +471,10 @@ export default function MovieDetailPage({ params }: MovieDetailProps) {
             padding: '0 clamp(18px,5vw,40px)',
             animation: 'cin-fade-up 0.45s 0.35s ease both',
           }}>
-            <div style={{ height: 1, background: 'rgba(255,255,255,0.07)', marginBottom: 24 }} />
+            <div style={{ height: 1, background: 'rgba(0,0,0,0.07)', marginBottom: 24 }} />
             <p style={{
               fontSize: 10, fontWeight: 700, letterSpacing: '0.09em',
-              textTransform: 'uppercase', color: '#55556a', marginBottom: 12,
+              textTransform: 'uppercase', color: '#A09BB5', marginBottom: 12,
             }}>
               Genres
             </p>
@@ -482,9 +482,9 @@ export default function MovieDetailPage({ params }: MovieDetailProps) {
               {genres.slice(0, 8).map((g, idx) => (
                 <span key={idx} style={{
                   padding: '7px 16px', borderRadius: 20,
-                  border: '1px solid rgba(255,255,255,0.09)',
-                  background: 'rgba(255,255,255,0.05)',
-                  fontSize: 12, fontWeight: 600, color: '#9490B0',
+                  border: '1px solid rgba(0,0,0,0.08)',
+                  background: 'rgba(0,0,0,0.04)',
+                  fontSize: 12, fontWeight: 600, color: '#6B6580',
                 }}>
                   {typeof g === 'string' ? g : g.name}
                 </span>
