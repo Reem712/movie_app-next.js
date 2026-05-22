@@ -51,7 +51,3 @@ temp/
 # vercel
 .vercel/
 
-# lock files (اختياري)
-# package-lock.json
-# yarn.lock
-# pnpm-lock.yaml
